@@ -1,16 +1,3 @@
-variable "project" {
-  type = string
-}
-
-variable "environment" {
-  type = string
-}
-
-variable "db_password" {
-  type      = string
-  sensitive = true
-}
-
 resource "aws_db_instance" "oracle" {
   identifier         = "${var.project}-${var.environment}-oracle"
   engine             = "oracle-se2"
@@ -19,8 +6,4 @@ resource "aws_db_instance" "oracle" {
   username           = "helpclub_app"
   password           = var.db_password
   skip_final_snapshot = true
-}
-
-output "db_endpoint" {
-  value = aws_db_instance.oracle.endpoint
 }

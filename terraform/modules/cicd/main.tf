@@ -1,11 +1,3 @@
-variable "project" {
-  type = string
-}
-
-variable "environment" {
-  type = string
-}
-
 resource "aws_codepipeline" "this" {
   name = "${var.project}-${var.environment}-pipeline"
   role_arn = "arn:aws:iam::123456789012:role/dummy"
@@ -31,8 +23,4 @@ resource "aws_codepipeline" "this" {
       }
     }
   }
-}
-
-output "pipeline_name" {
-  value = aws_codepipeline.this.name
 }
