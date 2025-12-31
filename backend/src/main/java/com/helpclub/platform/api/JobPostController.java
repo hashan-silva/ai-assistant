@@ -6,6 +6,7 @@ import com.helpclub.platform.api.dto.JobPostResponse;
 import com.helpclub.platform.domain.JobPost;
 import com.helpclub.platform.domain.UserAccount;
 import com.helpclub.platform.service.JobPostService;
+import com.helpclub.platform.service.MatchResult;
 import com.helpclub.platform.service.MatchingService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,7 +92,7 @@ public class JobPostController {
         return response;
     }
 
-    private JobMatchResponse toMatchResponse(Long jobPostId, MatchingService.MatchResult match) {
+    private JobMatchResponse toMatchResponse(Long jobPostId, MatchResult match) {
         JobMatchResponse response = new JobMatchResponse();
         response.setJobPostId(jobPostId);
         response.setSeekerId(match.seekerId());

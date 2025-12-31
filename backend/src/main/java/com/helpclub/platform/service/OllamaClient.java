@@ -53,7 +53,7 @@ public class OllamaClient {
         return parseSeekerResponse(raw);
     }
 
-    public String generatePosterReply(JobPost jobPost, List<MatchingService.MatchResult> matches) {
+    public String generatePosterReply(JobPost jobPost, List<MatchResult> matches) {
         String matchSummary = matches.isEmpty()
             ? "No matches yet."
             : matches.stream()
@@ -67,6 +67,50 @@ public class OllamaClient {
             Matches: %s
             """.formatted(jobPost.getTitle(), matchSummary);
         return generate(prompt);
+    }
+
+    public List<MatchResult> rankMatches(JobPost jobPost, List<JobSeekerProfile> profiles) {
+        List<SeekerSummary> seekers = profiles.stream()
+            .filter(profile -> profile.getUser() != null)
+            .map(profile -> new SeekerSummary(
+                profile.getUser().getId(),
+                profile.getFullName(),
+                profile.getHeadline(),
+                profile.getSkills(),
+                profile.getLocation(),
+                profile.getExperienceSummary()
+            ))
+            .collect(Collectors.toList());
+        if (seekers.isEmpty()) {
+            return List.of();
+        }
+        String seekersJson;
+        try {
+            seekersJson = objectMapper.writeValueAsString(seekers);
+        } catch (Exception ex) {
+            throw new IllegalStateException("Failed to serialize seekers", ex);
+        }
+        String prompt = """
+            You are an AI recruiter. Score job seekers for the job below.
+            Return only strict JSON array of objects with fields:
+            [{"seekerId":1,"score":0-100,"rationale":"short reason"}]
+            Only include seekers that are a reasonable match.
+            Job:
+            title=%s
+            description=%s
+            skills=%s
+            location=%s
+            Seekers JSON:
+            %s
+            """.formatted(
+                nullToEmpty(jobPost.getTitle()),
+                nullToEmpty(jobPost.getDescription()),
+                nullToEmpty(jobPost.getSkills()),
+                nullToEmpty(jobPost.getLocation()),
+                seekersJson
+            );
+        String raw = generate(prompt);
+        return parseMatchResults(raw);
     }
 
     private String generate(String prompt) {
@@ -92,13 +136,41 @@ public class OllamaClient {
         }
     }
 
+    private List<MatchResult> parseMatchResults(String raw) {
+        String json = extractJson(raw);
+        try {
+            List<MatchResultPayload> payload = objectMapper.readValue(
+                json,
+                objectMapper.getTypeFactory().constructCollectionType(List.class, MatchResultPayload.class)
+            );
+            if (payload == null) {
+                return List.of();
+            }
+            return payload.stream()
+                .filter(item -> item.seekerId() != null && item.score() != null)
+                .map(item -> new MatchResult(
+                    item.seekerId(),
+                    item.score(),
+                    item.rationale() == null ? "" : item.rationale()
+                ))
+                .toList();
+        } catch (Exception ex) {
+            throw new IllegalStateException("Failed to parse match results", ex);
+        }
+    }
+
     private String extractJson(String raw) {
         int start = raw.indexOf('{');
         int end = raw.lastIndexOf('}');
         if (start >= 0 && end > start) {
             return raw.substring(start, end + 1);
         }
-        return raw;
+        int arrayStart = raw.indexOf('[');
+        int arrayEnd = raw.lastIndexOf(']');
+        if (arrayStart >= 0 && arrayEnd > arrayStart) {
+            return raw.substring(arrayStart, arrayEnd + 1);
+        }
+        return raw.trim();
     }
 
     private String nullToEmpty(String value) {
@@ -114,5 +186,13 @@ public class OllamaClient {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record SeekerLlmResponse(String reply, Map<String, String> updates) {
+    }
+
+    private record SeekerSummary(Long seekerId, String name, String headline, String skills,
+                                 String location, String experience) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private record MatchResultPayload(Long seekerId, Integer score, String rationale) {
     }
 }

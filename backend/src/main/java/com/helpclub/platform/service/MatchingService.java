@@ -16,16 +16,34 @@ import org.springframework.stereotype.Service;
 public class MatchingService {
 
     private final JobSeekerProfileRepository jobSeekerProfileRepository;
+    private final OllamaClient ollamaClient;
 
-    public MatchingService(JobSeekerProfileRepository jobSeekerProfileRepository) {
+    public MatchingService(JobSeekerProfileRepository jobSeekerProfileRepository,
+                           OllamaClient ollamaClient) {
         this.jobSeekerProfileRepository = jobSeekerProfileRepository;
+        this.ollamaClient = ollamaClient;
     }
 
     public List<MatchResult> computeMatches(JobPost jobPost) {
+        List<JobSeekerProfile> profiles = jobSeekerProfileRepository.findAll();
+        try {
+            List<MatchResult> matches = ollamaClient.rankMatches(jobPost, profiles);
+            if (matches != null && !matches.isEmpty()) {
+                return matches.stream()
+                    .sorted((a, b) -> b.score().compareTo(a.score()))
+                    .toList();
+            }
+        } catch (RuntimeException ex) {
+            // Fall back to heuristic matching if LLM fails.
+        }
+        return computeHeuristicMatches(jobPost, profiles);
+    }
+
+    private List<MatchResult> computeHeuristicMatches(JobPost jobPost, List<JobSeekerProfile> profiles) {
         Set<String> jobTokens = tokenize(jobPost.getTitle(), jobPost.getSkills(), jobPost.getDescription());
 
         List<MatchResult> matches = new ArrayList<>();
-        for (JobSeekerProfile profile : jobSeekerProfileRepository.findAll()) {
+        for (JobSeekerProfile profile : profiles) {
             if (profile.getUser().getRole() != UserRole.JOB_SEEKER) {
                 continue;
             }
@@ -64,8 +82,5 @@ public class MatchingService {
             }
         }
         return tokens;
-    }
-
-    public record MatchResult(Long seekerId, Integer score, String rationale) {
     }
 }

@@ -78,7 +78,7 @@ public class ChatService {
             return new ChatResult(reply, List.of(), List.of());
         }
         JobPost latest = posts.get(0);
-        List<MatchingService.MatchResult> matches = matchingService.computeMatches(latest);
+        List<MatchResult> matches = matchingService.computeMatches(latest);
         List<String> topMatches = buildTopMatches(matches);
         String reply;
         try {
@@ -152,9 +152,9 @@ public class ChatService {
             + "Use 'skills: Java, Spring' style entries so I can update your profile.";
     }
 
-    private List<String> buildTopMatches(List<MatchingService.MatchResult> matches) {
+    private List<String> buildTopMatches(List<MatchResult> matches) {
         List<String> topMatches = new ArrayList<>();
-        for (MatchingService.MatchResult match : matches.stream().limit(5).toList()) {
+        for (MatchResult match : matches.stream().limit(5).toList()) {
             topMatches.add("Seeker #" + match.seekerId()
                 + " score=" + match.score());
         }
