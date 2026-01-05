@@ -8,6 +8,7 @@
     "home": "Översikt",
     "programs": "Program",
     "community": "Gemenskap",
+    "chat": "Chatt",
     "support": "Stöd",
     "impact": "Påverkan",
     "profile": "Profil"
@@ -96,6 +97,91 @@
         "body": "Samling med naturvandring och fika.",
         "time": "Lördag 10.00"
       }
+    }
+  },
+  "chat": {
+    "title": "Samordningschatt",
+    "subtitle": "Live-rum för triage, onboarding och partnerskap.",
+    "sidebarTitle": "Aktiva rum",
+    "membersLabel": "medlemmar",
+    "status": {
+      "live": "Live"
+    },
+    "actions": {
+      "more": "Fler alternativ"
+    },
+    "presence": "6 personer online, svarstid under 2 min.",
+    "avatars": {
+      "one": "L",
+      "two": "A",
+      "three": "S",
+      "four": "M"
+    },
+    "quickRepliesTitle": "Snabbsvar",
+    "composerPlaceholder": "Skriv en uppdatering, be om täckning eller tagga någon...",
+    "sendLabel": "Skicka",
+    "time": {
+      "now": "Nu"
+    },
+    "people": {
+      "you": "Du",
+      "assistant": "Omsorgsassistent",
+      "lisa": "Lisa Nordin",
+      "otto": "Otto Berg",
+      "mila": "Mila Ek",
+      "jonas": "Jonas Holm",
+      "elin": "Elin Sjöström",
+      "samir": "Samir Aziz"
+    },
+    "rooms": {
+      "care": {
+        "name": "Omsorgstriage",
+        "topic": "Eskaleringar och nästa steg för dagens ärenden.",
+        "status": "Jour"
+      },
+      "onboarding": {
+        "name": "Onboardingflöde",
+        "topic": "Trygga överlämningar, checklistor och första veckan.",
+        "status": "Mentorer"
+      },
+      "partners": {
+        "name": "Partnerdesk",
+        "topic": "Kommunala avstämningar och gemensam kapacitet.",
+        "status": "Partners"
+      }
+    },
+    "focus": {
+      "title": "Skiftfokus",
+      "one": "Bekräfta täckning för eftermiddagspasset.",
+      "two": "Skicka onboarding-checklistan till kommunala kontaktpersoner.",
+      "three": "Samla två framgångsexempel till veckorapporten."
+    },
+    "messages": {
+      "care": {
+        "one": "Vi har två nya remisser från Umea. Kan vi bekräfta transporten?",
+        "two": "Jag kan ta transporten. Finns medicinska noteringar jag ska flagga?",
+        "three": "Ja, astma i profilen och behov av svensk tolk."
+      },
+      "onboarding": {
+        "one": "Nya gruppen startar på måndag. Har vi välkomstpaketet klart?",
+        "two": "Jag färdigställer paketet idag och skickar checklistan.",
+        "three": "Bra. Jag informerar mentorerna kl 14.00."
+      },
+      "partners": {
+        "one": "Gothenburg-teamet bad om en gemensam session nästa vecka.",
+        "two": "Vi kan föreslå onsdag förmiddag och dela agendan.",
+        "three": "Jag bekräftar tiden och uppdaterar kalendern."
+      }
+    },
+    "quickReplies": {
+      "checkin": "Jag kollar läget för öppna ärenden.",
+      "summary": "Delar en snabb status.",
+      "schedule": "Kan vi synka schemat?"
+    },
+    "autoReplies": {
+      "care": "Jag kan ta in sjuksköterskesamordnaren och skriva uppdateringen.",
+      "onboarding": "På gång. Jag lägger upp den sista checklistan om 15 minuter.",
+      "partners": "Jag meddelar kommunen och bekräftar tiden."
     }
   },
   "support": {

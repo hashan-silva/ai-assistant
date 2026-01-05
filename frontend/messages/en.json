@@ -8,6 +8,7 @@
     "home": "Overview",
     "programs": "Programs",
     "community": "Community",
+    "chat": "Chat",
     "support": "Support",
     "impact": "Impact",
     "profile": "Profile"
@@ -96,6 +97,91 @@
         "body": "Group hike with fika and reflection.",
         "time": "Saturday 10:00"
       }
+    }
+  },
+  "chat": {
+    "title": "Care coordination chat",
+    "subtitle": "Live rooms for triage, onboarding, and partner alignment.",
+    "sidebarTitle": "Active rooms",
+    "membersLabel": "members",
+    "status": {
+      "live": "Live"
+    },
+    "actions": {
+      "more": "More options"
+    },
+    "presence": "6 people online, response time under 2 min.",
+    "avatars": {
+      "one": "L",
+      "two": "A",
+      "three": "S",
+      "four": "M"
+    },
+    "quickRepliesTitle": "Quick replies",
+    "composerPlaceholder": "Write an update, ask for coverage, or tag someone...",
+    "sendLabel": "Send update",
+    "time": {
+      "now": "Now"
+    },
+    "people": {
+      "you": "You",
+      "assistant": "Care assistant",
+      "lisa": "Lisa Nordin",
+      "otto": "Otto Berg",
+      "mila": "Mila Ek",
+      "jonas": "Jonas Holm",
+      "elin": "Elin Sjostrom",
+      "samir": "Samir Aziz"
+    },
+    "rooms": {
+      "care": {
+        "name": "Care triage",
+        "topic": "Escalations and next steps for today's cases.",
+        "status": "On duty"
+      },
+      "onboarding": {
+        "name": "Onboarding flow",
+        "topic": "Warm handoffs, checklists, and first-week tasks.",
+        "status": "Mentors"
+      },
+      "partners": {
+        "name": "Partner desk",
+        "topic": "Municipal check-ins and shared capacity.",
+        "status": "Partners"
+      }
+    },
+    "focus": {
+      "title": "Shift focus",
+      "one": "Confirm escalation coverage for the afternoon shift.",
+      "two": "Send onboarding checklist to municipal leads.",
+      "three": "Capture two success stories for the weekly report."
+    },
+    "messages": {
+      "care": {
+        "one": "We have two new referrals from Umea. Can we confirm transport?",
+        "two": "I can take the transport call. Any medical notes I should flag?",
+        "three": "Yes, asthma note in profile and needs Swedish interpreter."
+      },
+      "onboarding": {
+        "one": "New cohort starts Monday. Do we have the welcome kit ready?",
+        "two": "I will finalize the kit today and send the checklist.",
+        "three": "Great. I'll brief the mentors at 14:00."
+      },
+      "partners": {
+        "one": "Gothenburg team asked for a joint session next week.",
+        "two": "Let's offer Wednesday morning and share the agenda.",
+        "three": "I will confirm the slot and update the shared calendar."
+      }
+    },
+    "quickReplies": {
+      "checkin": "Checking in on open cases.",
+      "summary": "Sharing a quick status summary.",
+      "schedule": "Can we align on the schedule?"
+    },
+    "autoReplies": {
+      "care": "I can loop in the nurse coordinator and draft the update.",
+      "onboarding": "On it. I'll post the final checklist in 15 minutes.",
+      "partners": "I will notify the municipality and confirm the call time."
     }
   },
   "support": {

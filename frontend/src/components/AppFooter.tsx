@@ -1,6 +1,6 @@
 import {Box, Container, Link as MuiLink, Stack, Typography} from '@mui/material';
 import {getTranslations} from 'next-intl/server';
-import {Link} from '@/i18n/navigation';
+import Link from 'next/link';
 
 export default async function AppFooter() {
   const t = await getTranslations('footer');

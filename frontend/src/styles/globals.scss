@@ -103,6 +103,88 @@ a {
   border-top: 1px solid var(--border-soft);
 }
 
+.chat-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+  gap: 24px;
+}
+
+.chat-sidebar {
+  position: sticky;
+  top: 96px;
+  align-self: start;
+}
+
+.chat-room {
+  border-radius: 20px;
+  border: 1px solid var(--border-soft);
+  background: var(--surface-elevated);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chat-room:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(11, 34, 50, 0.08);
+}
+
+.chat-room.active {
+  border-color: rgba(47, 127, 141, 0.35);
+  box-shadow: 0 16px 32px rgba(47, 127, 141, 0.14);
+}
+
+.chat-panel {
+  border-radius: 28px;
+  border: 1px solid var(--border-soft);
+  overflow: hidden;
+  background: var(--surface-elevated);
+  box-shadow: 0 18px 40px rgba(11, 34, 50, 0.08);
+}
+
+.chat-panel-header {
+  padding: 24px 28px;
+  background: linear-gradient(130deg, #f7fbfc 0%, #e4eff2 50%, #f5f0ea 100%);
+}
+
+.chat-thread {
+  padding: 28px;
+  background: var(--surface-strong);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.chat-message {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-soft);
+  border-radius: 18px;
+  padding: 14px 16px;
+  max-width: 70%;
+  box-shadow: 0 12px 28px rgba(11, 34, 50, 0.08);
+}
+
+.chat-message.self {
+  margin-left: auto;
+  background: linear-gradient(130deg, #0b3d5c, #2f7f8d);
+  border: none;
+  color: #f7fbfc;
+}
+
+.chat-message.self .chat-message-meta {
+  color: rgba(247, 251, 252, 0.75);
+}
+
+.chat-message-meta {
+  color: var(--ink-muted);
+}
+
+.chat-composer {
+  padding: 20px 24px 28px;
+  background: var(--surface-elevated);
+}
+
 @media (max-width: 900px) {
   .hero-panel {
     padding: 28px;
@@ -110,6 +192,14 @@ a {
 
   .app-main {
     padding: 32px 0 64px;
+  }
+
+  .chat-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-sidebar {
+    position: static;
   }
 }
 
@@ -120,5 +210,17 @@ a {
 
   .app-main {
     padding: 24px 0 48px;
+  }
+
+  .chat-thread {
+    padding: 20px;
+  }
+
+  .chat-panel-header {
+    padding: 20px;
+  }
+
+  .chat-composer {
+    padding: 18px 20px 22px;
   }
 }

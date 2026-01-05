@@ -13,9 +13,8 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import {useTranslations} from 'next-intl';
-import {Link} from '@/i18n/navigation';
+import Link from 'next/link';
 import {navItems} from '@/lib/navigation';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function AppHeader() {
   const t = useTranslations();
@@ -76,10 +75,6 @@ export default function AppHeader() {
 
         <Box sx={{display: {xs: 'none', lg: 'flex'}, gap: 1}}>{navLinks}</Box>
 
-        <Box sx={{display: {xs: 'none', md: 'flex'}, ml: 2}}>
-          <LanguageSwitcher />
-        </Box>
-
         <IconButton
           onClick={() => setOpen(true)}
           sx={{display: {xs: 'inline-flex', lg: 'none'}, ml: 1}}
@@ -98,7 +93,6 @@ export default function AppHeader() {
         <Stack spacing={2}>
           <Typography variant="h6">{t('app.name')}</Typography>
           <Stack spacing={1}>{drawerLinks}</Stack>
-          <LanguageSwitcher />
         </Stack>
       </Drawer>
     </AppBar>

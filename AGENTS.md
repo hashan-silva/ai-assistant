@@ -6,12 +6,23 @@
 - `database/` – Oracle DDL in `schema/` and deterministic seed SQL in `seeds/`, mirrored by Flyway scripts.
 - `terraform/` – Modules for `network`, `compute`, `database`, `cicd` plus environment stacks under `envs/dev` and `envs/prod`; each module follows the `main.tf`, `variables.tf`, `outputs.tf` convention for clarity.
 
+## Product Direction & Core Flows
+- Helpclub is a hiring platform that connects job seekers with job posters.
+- Job posters chat with an AI agent to define requirements; the agent produces a structured job post JSON and suggests matching seekers by skills.
+- Job seekers chat with an AI agent to create or update profiles; they receive email notifications when new job posts match their skills.
+- AI integration uses OpenLLaMA and should keep prompts, schema definitions, and model configs versioned in the repo.
+
 ## Build, Test, and Development Commands
 - `cd backend && mvn spring-boot:run` – start the API against the configured Oracle instance.
 - `cd backend && mvn test` – run unit/integration tests via JUnit 5.
 - `cd frontend && npm install && npm run dev` – launch the Next.js dev server on `http://localhost:3000`.
 - `cd frontend && npm run build` – production build used by Docker and Terraform deploys.
 - `cd terraform/envs/<env> && terraform init && terraform plan` – validate infrastructure changes per environment.
+
+## Deployment & Automation
+- Deployments are automated via GitHub Actions only; do not run manual Docker or Terraform applies.
+- Docker images are built in CI and deployed via Terraform from the pipeline.
+- Treat Terraform runs as CI-owned; local usage should be limited to `terraform plan` for validation.
 
 ## Coding Style & Naming Conventions
 - Java: 4-space indentation, package names `com.helpclub.*`, classes in `PascalCase`, Spring components annotated explicitly. Auto-format with `mvn fmt:format` if added.
