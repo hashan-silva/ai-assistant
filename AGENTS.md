@@ -10,7 +10,7 @@
 - Helpclub is a hiring platform that connects job seekers with job posters.
 - Job posters chat with an AI agent to define requirements; the agent produces a structured job post JSON and suggests matching seekers by skills.
 - Job seekers chat with an AI agent to create or update profiles; they receive email notifications when new job posts match their skills.
-- AI integration uses OpenLLaMA and should keep prompts, schema definitions, and model configs versioned in the repo.
+- AI integration uses Ollama and should keep prompts, schema definitions, and model configs versioned in the repo.
 
 ## Build, Test, and Development Commands
 - `cd backend && mvn spring-boot:run` – start the API against the configured Oracle instance.

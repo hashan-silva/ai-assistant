@@ -6,7 +6,7 @@ Helpclub is evolving into a hiring platform that connects job seekers with job p
 
 - **Backend** – Spring Boot (Maven), Oracle DB, Flyway migrations
 - **Frontend** – Next.js 14 + TypeScript + Material UI + SCSS + next-intl
-- **AI** – OpenLLaMA for chat-driven job post and profile creation
+- **AI** – Ollama for chat-driven job post and profile creation
 - **Database** – Oracle schema + seeds for local development
 - **Terraform** – IaC for AWS networking, compute, database, and CI/CD
 
