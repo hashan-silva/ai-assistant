@@ -1,6 +1,7 @@
 # Builder image
 FROM amazoncorretto:21-alpine AS build
 WORKDIR /app
+RUN apk add --no-cache maven
 COPY pom.xml .
 RUN mvn -ntp -B dependency:go-offline
 COPY src ./src

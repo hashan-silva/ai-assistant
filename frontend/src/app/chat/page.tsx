@@ -7,7 +7,6 @@ import {
   Box,
   Button,
   Card,
-  CardContent,
   Chip,
   Divider,
   IconButton,
@@ -18,7 +17,6 @@ import {
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import SendIcon from '@mui/icons-material/Send';
 import {useTranslations} from 'next-intl';
-import SectionHeader from '@/components/SectionHeader';
 
 type Message = {
   id: string;
@@ -28,41 +26,73 @@ type Message = {
   self?: boolean;
 };
 
-type Room = {
-  id: string;
-  name: string;
-  topic: string;
-  members: number;
-  statusLabel: string;
-  unread: number;
-};
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 
-const buildRooms = (t: (key: string) => string): Room[] => [
-  {
-    id: 'care',
-    name: t('rooms.care.name'),
-    topic: t('rooms.care.topic'),
-    members: 8,
-    statusLabel: t('rooms.care.status'),
-    unread: 3
-  },
-  {
-    id: 'onboarding',
-    name: t('rooms.onboarding.name'),
-    topic: t('rooms.onboarding.topic'),
-    members: 6,
-    statusLabel: t('rooms.onboarding.status'),
-    unread: 0
-  },
-  {
-    id: 'partners',
-    name: t('rooms.partners.name'),
-    topic: t('rooms.partners.topic'),
-    members: 5,
-    statusLabel: t('rooms.partners.status'),
-    unread: 1
-  }
-];
+const formatInlineMarkdown = (value: string) =>
+  value
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+const renderMarkdown = (value: string) => {
+  const escaped = escapeHtml(value.trim());
+  const lines = escaped.split(/\r?\n/);
+  const htmlParts: string[] = [];
+  let inOrderedList = false;
+  let inUnorderedList = false;
+
+  const closeLists = () => {
+    if (inOrderedList) {
+      htmlParts.push('</ol>');
+      inOrderedList = false;
+    }
+    if (inUnorderedList) {
+      htmlParts.push('</ul>');
+      inUnorderedList = false;
+    }
+  };
+
+  lines.forEach((line) => {
+    if (!line.trim()) {
+      closeLists();
+      return;
+    }
+
+    if (/^\s*\d+\.\s+/.test(line)) {
+      if (!inOrderedList) {
+        closeLists();
+        htmlParts.push('<ol>');
+        inOrderedList = true;
+      }
+      const item = line.replace(/^\s*\d+\.\s+/, '');
+      htmlParts.push(`<li>${formatInlineMarkdown(item)}</li>`);
+      return;
+    }
+
+    if (/^\s*[-*]\s+/.test(line)) {
+      if (!inUnorderedList) {
+        closeLists();
+        htmlParts.push('<ul>');
+        inUnorderedList = true;
+      }
+      const item = line.replace(/^\s*[-*]\s+/, '');
+      htmlParts.push(`<li>${formatInlineMarkdown(item)}</li>`);
+      return;
+    }
+
+    closeLists();
+    htmlParts.push(`<p>${formatInlineMarkdown(line)}</p>`);
+  });
+
+  closeLists();
+  return htmlParts.join('');
+};
 
 const buildThreads = (t: (key: string) => string): Record<string, Message[]> => ({
   care: [
@@ -132,18 +162,20 @@ const buildThreads = (t: (key: string) => string): Record<string, Message[]> => 
 
 export default function ChatPage() {
   const t = useTranslations('chat');
-  const rooms = useMemo(() => buildRooms(t), [t]);
   const baseThreads = useMemo(() => buildThreads(t), [t]);
-
-  const [activeRoomId, setActiveRoomId] = useState(rooms[0]?.id ?? 'care');
+  const activeRoomId = 'care';
+  const activeRoom = {
+    name: t('rooms.care.name'),
+    topic: t('rooms.care.topic')
+  };
   const [threads, setThreads] = useState(baseThreads);
   const [composer, setComposer] = useState('');
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     setThreads(baseThreads);
   }, [baseThreads]);
 
-  const activeRoom = rooms.find((room) => room.id === activeRoomId) ?? rooms[0];
   const activeMessages = threads[activeRoomId] ?? [];
 
   const quickReplies = [
@@ -152,9 +184,9 @@ export default function ChatPage() {
     t('quickReplies.schedule')
   ];
 
-  const handleSend = (message: string) => {
+  const handleSend = async (message: string) => {
     const trimmed = message.trim();
-    if (!trimmed) {
+    if (!trimmed || isSending) {
       return;
     }
 
@@ -172,178 +204,152 @@ export default function ChatPage() {
     }));
     setComposer('');
 
-    window.setTimeout(() => {
+    setIsSending(true);
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: trimmed})
+      });
+      let payload: {reply?: string; error?: string} | null = null;
+      try {
+        payload = await response.json();
+      } catch {
+        payload = null;
+      }
+      if (!response.ok) {
+        throw new Error(payload?.error || t('errors.requestFailed'));
+      }
+      const replyText = payload?.reply && payload.reply.trim()
+        ? payload.reply.trim()
+        : t('errors.emptyReply');
       const reply: Message = {
         id: `assistant-${Date.now()}`,
         author: t('people.assistant'),
-        content: t(`autoReplies.${activeRoomId}`),
+        content: replyText,
         time: t('time.now')
       };
-
       setThreads((prev) => ({
         ...prev,
         [activeRoomId]: [...(prev[activeRoomId] ?? []), reply]
       }));
-    }, 700);
+    } catch (error) {
+      const reply: Message = {
+        id: `assistant-${Date.now()}`,
+        author: t('people.assistant'),
+        content: error instanceof Error && error.message
+          ? error.message
+          : t('errors.requestFailed'),
+        time: t('time.now')
+      };
+      setThreads((prev) => ({
+        ...prev,
+        [activeRoomId]: [...(prev[activeRoomId] ?? []), reply]
+      }));
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
-    <Stack spacing={4}>
-      <SectionHeader title={t('title')} subtitle={t('subtitle')} />
-
-      <Box className="chat-layout">
-        <Stack spacing={2} className="chat-sidebar">
-          <Typography variant="subtitle1" sx={{fontWeight: 600}}>
-            {t('sidebarTitle')}
-          </Typography>
-          <Stack spacing={1.5}>
-            {rooms.map((room) => (
-              <Card
-                key={room.id}
-                className={`chat-room ${room.id === activeRoomId ? 'active' : ''}`}
-                onClick={() => setActiveRoomId(room.id)}
-              >
-                <CardContent>
-                  <Stack spacing={1}>
-                    <Stack direction="row" justifyContent="space-between" alignItems="center">
-                      <Typography variant="h4">{room.name}</Typography>
-                      {room.unread > 0 ? (
-                        <Chip
-                          label={room.unread}
-                          size="small"
-                          color="secondary"
-                        />
-                      ) : null}
-                    </Stack>
-                    <Typography variant="body2" color="text.secondary">
-                      {room.topic}
-                    </Typography>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Chip label={room.statusLabel} size="small" variant="outlined" />
-                      <Typography variant="caption" color="text.secondary">
-                        {room.members} {t('membersLabel')}
-                      </Typography>
-                    </Stack>
-                  </Stack>
-                </CardContent>
-              </Card>
-            ))}
-          </Stack>
-
-          <Card className="info-card">
-            <CardContent>
-              <Stack spacing={2}>
-                <Typography variant="h4">{t('focus.title')}</Typography>
-                <Stack spacing={1}>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('focus.one')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('focus.two')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {t('focus.three')}
-                  </Typography>
-                </Stack>
-              </Stack>
-            </CardContent>
-          </Card>
-        </Stack>
-
-        <Card className="chat-panel">
-          <Box className="chat-panel-header">
-            <Stack spacing={2}>
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Stack spacing={0.5}>
-                  <Typography variant="h3">{activeRoom?.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {activeRoom?.topic}
-                  </Typography>
-                </Stack>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <Chip label={t('status.live')} size="small" color="primary" />
-                  <IconButton aria-label={t('actions.more')}>
-                    <MoreHorizIcon />
-                  </IconButton>
-                </Stack>
-              </Stack>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <AvatarGroup max={4}>
-                  <Avatar>{t('avatars.one')}</Avatar>
-                  <Avatar>{t('avatars.two')}</Avatar>
-                  <Avatar>{t('avatars.three')}</Avatar>
-                  <Avatar>{t('avatars.four')}</Avatar>
-                </AvatarGroup>
+    <Box className="chat-layout">
+      <Card className="chat-panel">
+        <Box className="chat-panel-header">
+          <Stack spacing={2}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Stack spacing={0.5}>
+                <Typography variant="h3">{activeRoom?.name}</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {t('presence')}
+                  {activeRoom?.topic}
                 </Typography>
+              </Stack>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Chip label={t('status.live')} size="small" color="primary" />
+                <IconButton aria-label={t('actions.more')}>
+                  <MoreHorizIcon />
+                </IconButton>
               </Stack>
             </Stack>
-          </Box>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <AvatarGroup max={4}>
+                <Avatar>{t('avatars.one')}</Avatar>
+                <Avatar>{t('avatars.two')}</Avatar>
+                <Avatar>{t('avatars.three')}</Avatar>
+                <Avatar>{t('avatars.four')}</Avatar>
+              </AvatarGroup>
+              <Typography variant="body2" color="text.secondary">
+                {t('presence')}
+              </Typography>
+            </Stack>
+          </Stack>
+        </Box>
 
-          <Box className="chat-thread">
-            {activeMessages.map((message) => (
-              <Box
-                key={message.id}
-                className={`chat-message ${message.self ? 'self' : ''}`}
-              >
-                <Stack spacing={0.5}>
-                  <Typography variant="subtitle2">{message.author}</Typography>
-                  <Typography variant="body2">{message.content}</Typography>
-                  <Typography variant="caption" className="chat-message-meta">
-                    {message.time}
-                  </Typography>
-                </Stack>
-              </Box>
-            ))}
-          </Box>
-
-          <Divider />
-
-          <Box className="chat-composer">
-            <Stack spacing={2}>
-              <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                <Typography variant="subtitle2" color="text.secondary">
-                  {t('quickRepliesTitle')}
-                </Typography>
-                {quickReplies.map((reply) => (
-                  <Chip
-                    key={reply}
-                    label={reply}
-                    size="small"
-                    variant="outlined"
-                    onClick={() => handleSend(reply)}
-                  />
-                ))}
-              </Stack>
-              <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
-                <TextField
-                  fullWidth
-                  multiline
-                  minRows={2}
-                  value={composer}
-                  placeholder={t('composerPlaceholder')}
-                  onChange={(event) => setComposer(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' && !event.shiftKey) {
-                      event.preventDefault();
-                      handleSend(composer);
-                    }
-                  }}
+        <Box className="chat-thread">
+          {activeMessages.map((message) => (
+            <Box key={message.id} className={`chat-message ${message.self ? 'self' : ''}`}>
+              <Stack spacing={0.5}>
+                <Typography variant="subtitle2">{message.author}</Typography>
+                <Typography
+                  variant="body2"
+                  component="div"
+                  className="chat-message-content"
+                  dangerouslySetInnerHTML={{__html: renderMarkdown(message.content)}}
                 />
-                <Button
-                  variant="contained"
-                  endIcon={<SendIcon />}
-                  onClick={() => handleSend(composer)}
-                  sx={{alignSelf: {xs: 'stretch', sm: 'flex-end'}}}
-                >
-                  {t('sendLabel')}
-                </Button>
+                <Typography variant="caption" className="chat-message-meta">
+                  {message.time}
+                </Typography>
               </Stack>
+            </Box>
+          ))}
+        </Box>
+
+        <Divider />
+
+        <Box className="chat-composer">
+          <Stack spacing={2}>
+            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+              <Typography variant="subtitle2" color="text.secondary">
+                {t('quickRepliesTitle')}
+              </Typography>
+              {quickReplies.map((reply) => (
+                <Chip
+                  key={reply}
+                  label={reply}
+                  size="small"
+                  variant="outlined"
+                  onClick={() => void handleSend(reply)}
+                />
+              ))}
             </Stack>
-          </Box>
-        </Card>
-      </Box>
-    </Stack>
+            <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
+              <TextField
+                fullWidth
+                multiline
+                minRows={2}
+                value={composer}
+                placeholder={t('composerPlaceholder')}
+                onChange={(event) => setComposer(event.target.value)}
+                disabled={isSending}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    void handleSend(composer);
+                  }
+                }}
+              />
+              <Button
+                variant="contained"
+                endIcon={<SendIcon />}
+                onClick={() => void handleSend(composer)}
+                disabled={isSending || composer.trim().length === 0}
+                sx={{alignSelf: {xs: 'stretch', sm: 'flex-end'}}}
+              >
+                {t('sendLabel')}
+              </Button>
+            </Stack>
+          </Stack>
+        </Box>
+      </Card>
+    </Box>
   );
 }

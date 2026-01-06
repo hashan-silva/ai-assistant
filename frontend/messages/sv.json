@@ -100,6 +100,7 @@
     }
   },
   "chat": {
+    "brand": "Helpclub AI",
     "title": "Samordningschatt",
     "subtitle": "Live-rum för triage, onboarding och partnerskap.",
     "sidebarTitle": "Aktiva rum",
@@ -125,7 +126,7 @@
     },
     "people": {
       "you": "Du",
-      "assistant": "Omsorgsassistent",
+      "assistant": "Helpclub AI-assistent",
       "lisa": "Lisa Nordin",
       "otto": "Otto Berg",
       "mila": "Mila Ek",
@@ -182,6 +183,10 @@
       "care": "Jag kan ta in sjuksköterskesamordnaren och skriva uppdateringen.",
       "onboarding": "På gång. Jag lägger upp den sista checklistan om 15 minuter.",
       "partners": "Jag meddelar kommunen och bekräftar tiden."
+    },
+    "errors": {
+      "requestFailed": "Kunde inte nå Helpclub AI-assistenten. Försök igen.",
+      "emptyReply": "Helpclub AI-assistenten gav inget svar."
     }
   },
   "support": {

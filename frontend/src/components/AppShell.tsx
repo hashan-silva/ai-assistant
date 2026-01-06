@@ -1,16 +1,12 @@
 import type {ReactNode} from 'react';
-import {Box, Container} from '@mui/material';
-import AppHeader from '@/components/AppHeader';
-import AppFooter from '@/components/AppFooter';
+import {Box} from '@mui/material';
 
 export default function AppShell({children}: {children: ReactNode}) {
   return (
     <Box className="app-shell">
-      <AppHeader />
       <Box component="main" className="app-main">
-        <Container maxWidth="lg">{children}</Container>
+        {children}
       </Box>
-      <AppFooter />
     </Box>
   );
 }

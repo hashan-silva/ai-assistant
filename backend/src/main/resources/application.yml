@@ -1,17 +1,6 @@
 spring:
   application:
     name: helpclub-backend
-  datasource:
-    url: jdbc:oracle:thin:@//localhost:1521/FREEPDB1
-    username: helpclub_app
-    password: change-me
-    driver-class-name: oracle.jdbc.OracleDriver
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.OracleDialect
 server:
   port: 8080
 

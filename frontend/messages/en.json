@@ -100,6 +100,7 @@
     }
   },
   "chat": {
+    "brand": "Helpclub AI",
     "title": "Care coordination chat",
     "subtitle": "Live rooms for triage, onboarding, and partner alignment.",
     "sidebarTitle": "Active rooms",
@@ -125,7 +126,7 @@
     },
     "people": {
       "you": "You",
-      "assistant": "Care assistant",
+      "assistant": "Helpclub AI assistant",
       "lisa": "Lisa Nordin",
       "otto": "Otto Berg",
       "mila": "Mila Ek",
@@ -182,6 +183,10 @@
       "care": "I can loop in the nurse coordinator and draft the update.",
       "onboarding": "On it. I'll post the final checklist in 15 minutes.",
       "partners": "I will notify the municipality and confirm the call time."
+    },
+    "errors": {
+      "requestFailed": "Couldn't reach the Helpclub AI assistant. Try again.",
+      "emptyReply": "The Helpclub AI assistant did not return a reply."
     }
   },
   "support": {

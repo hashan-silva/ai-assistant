@@ -8,6 +8,8 @@
   --accent: #2f7f8d;
   --accent-warm: #d96a4d;
   --border-soft: rgba(12, 48, 70, 0.1);
+  --font-body: "Segoe UI", "Helvetica Neue", "Noto Sans", Arial, sans-serif;
+  --font-display: "Georgia", "Times New Roman", serif;
 }
 
 * {
@@ -35,7 +37,7 @@ a {
 
 .app-main {
   flex: 1;
-  padding: 48px 0 80px;
+  padding: 32px 0 48px;
 }
 
 .brand-dot {
@@ -97,40 +99,13 @@ a {
   border: 1px solid rgba(217, 106, 77, 0.2);
 }
 
-.app-footer {
-  padding: 48px 0 56px;
-  background: var(--surface-strong);
-  border-top: 1px solid var(--border-soft);
-}
-
 .chat-layout {
   display: grid;
-  grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 24px;
-}
-
-.chat-sidebar {
-  position: sticky;
-  top: 96px;
-  align-self: start;
-}
-
-.chat-room {
-  border-radius: 20px;
-  border: 1px solid var(--border-soft);
-  background: var(--surface-elevated);
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.chat-room:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(11, 34, 50, 0.08);
-}
-
-.chat-room.active {
-  border-color: rgba(47, 127, 141, 0.35);
-  box-shadow: 0 16px 32px rgba(47, 127, 141, 0.14);
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
 .chat-panel {
@@ -180,6 +155,39 @@ a {
   color: var(--ink-muted);
 }
 
+.chat-message-content {
+  p {
+    margin: 0 0 8px;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  ul,
+  ol {
+    margin: 0 0 8px 18px;
+    padding: 0;
+  }
+
+  li {
+    margin: 0 0 4px;
+  }
+
+  li:last-child {
+    margin-bottom: 0;
+  }
+
+  code {
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(15, 34, 45, 0.12);
+    font-family: 'IBM Plex Mono', 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono',
+      'Courier New', monospace;
+    font-size: 0.9em;
+  }
+}
+
 .chat-composer {
   padding: 20px 24px 28px;
   background: var(--surface-elevated);
@@ -191,15 +199,11 @@ a {
   }
 
   .app-main {
-    padding: 32px 0 64px;
+    padding: 28px 0 48px;
   }
 
   .chat-layout {
     grid-template-columns: 1fr;
-  }
-
-  .chat-sidebar {
-    position: static;
   }
 }
 
@@ -209,7 +213,7 @@ a {
   }
 
   .app-main {
-    padding: 24px 0 48px;
+    padding: 22px 0 40px;
   }
 
   .chat-thread {

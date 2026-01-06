@@ -1,27 +1,16 @@
 import '@/styles/globals.scss';
 import type {ReactNode} from 'react';
 import type {Metadata} from 'next';
-import {NextIntlClientProvider} from 'next-intl';
-import {getLocale, getMessages, getTranslations} from 'next-intl/server';
-import {Source_Serif_4, Work_Sans} from 'next/font/google';
+import {headers} from 'next/headers';
 import AppProviders from '@/components/AppProviders';
 import AppShell from '@/components/AppShell';
 import {defaultLocale} from '@/i18n/routing';
+import {getRequestLocale, getTranslator, loadMessages} from '@/i18n/translator';
 
 export const dynamic = 'force-dynamic';
 
-const displayFont = Source_Serif_4({
-  subsets: ['latin'],
-  variable: '--font-display'
-});
-
-const bodyFont = Work_Sans({
-  subsets: ['latin'],
-  variable: '--font-body'
-});
-
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations({locale: defaultLocale, namespace: 'app'});
+  const t = await getTranslator(defaultLocale, 'app');
 
   return {
     title: t('name'),
@@ -34,17 +23,16 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  const locale = await getLocale();
-  const messages = await getMessages();
+  const headerLocale = headers().get('accept-language');
+  const locale = getRequestLocale(headerLocale);
+  const messages = await loadMessages(locale);
 
   return (
     <html lang={locale}>
-      <body className={`${bodyFont.variable} ${displayFont.variable}`}>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <AppProviders>
-            <AppShell>{children}</AppShell>
-          </AppProviders>
-        </NextIntlClientProvider>
+      <body>
+        <AppProviders locale={locale} messages={messages}>
+          <AppShell>{children}</AppShell>
+        </AppProviders>
       </body>
     </html>
   );

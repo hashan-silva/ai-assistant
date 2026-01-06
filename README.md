@@ -1,6 +1,6 @@
 # Helpclub Monorepo
 
-Helpclub is evolving into a hiring platform that connects job seekers with job posters. Job posters chat with an AI agent to capture requirements, generate a structured job post JSON, and receive suggested candidates based on skills. Job seekers create profiles via AI chat and get email notifications when new jobs match their skills.
+Helpclub is evolving into a hiring platform that connects job seekers with job posters through a single ChatGPT-style experience. Job posters chat with an AI agent to capture requirements, generate a structured job post JSON, and receive suggested candidates based on skills. Job seekers create profiles via AI chat and get email notifications when new jobs match their skills.
 
 ## Stack
 
