@@ -2,9 +2,15 @@
 
 ## Project Structure & Module Organization
 - `backend/` – Spring Boot service (Maven) with domain logic under `src/main/java`, configuration + Flyway migrations under `src/main/resources`, and tests in `src/test/java`.
-- `frontend/` – Next.js 14 + TypeScript app; routes live in `src/app`, shared UI in `src/components`, utilities in `src/lib`, styles in `src/styles`, and static assets in `public/`.
+- `frontend/` – Next.js 14 + TypeScript app with Material UI, SCSS, and next-intl; routes live in `src/app`, shared UI in `src/components`, utilities in `src/lib`, styles in `src/styles`, and static assets in `public/`.
 - `database/` – Oracle DDL in `schema/` and deterministic seed SQL in `seeds/`, mirrored by Flyway scripts.
 - `terraform/` – Modules for `network`, `compute`, `database`, `cicd` plus environment stacks under `envs/dev` and `envs/prod`; each module follows the `main.tf`, `variables.tf`, `outputs.tf` convention for clarity.
+
+## Product Direction & Core Flows
+- Helpclub is a hiring platform that connects job seekers with job posters.
+- Job posters chat with an AI agent to define requirements; the agent produces a structured job post JSON and suggests matching seekers by skills.
+- Job seekers chat with an AI agent to create or update profiles; they receive email notifications when new job posts match their skills.
+- AI integration uses Ollama and should keep prompts, schema definitions, and model configs versioned in the repo.
 
 ## Build, Test, and Development Commands
 - `cd backend && mvn spring-boot:run` – start the API against the configured Oracle instance.
@@ -13,9 +19,14 @@
 - `cd frontend && npm run build` – production build used by Docker and Terraform deploys.
 - `cd terraform/envs/<env> && terraform init && terraform plan` – validate infrastructure changes per environment.
 
+## Deployment & Automation
+- Deployments are automated via GitHub Actions only; do not run manual Docker or Terraform applies.
+- Docker images are built in CI and deployed via Terraform from the pipeline.
+- Treat Terraform runs as CI-owned; local usage should be limited to `terraform plan` for validation.
+
 ## Coding Style & Naming Conventions
 - Java: 4-space indentation, package names `com.helpclub.*`, classes in `PascalCase`, Spring components annotated explicitly. Auto-format with `mvn fmt:format` if added.
-- TypeScript/React: follow Next.js defaults, 2-space indentation, functional components in `PascalCase`, hooks/helpers in `camelCase`. Run `npm run lint` to enforce ESLint + Next rules.
+- TypeScript/React: follow Next.js defaults, 2-space indentation, functional components in `PascalCase`, hooks/helpers in `camelCase`. Prefer Material UI components and SCSS modules or global SCSS in `src/styles`. Run `npm run lint` to enforce ESLint + Next rules.
 - Terraform: snake_case for variables, module outputs in lowercase, keep one resource block per concern.
   - Module files must stay split into `main.tf`, `variables.tf`, and `outputs.tf`; avoid reintroducing monolithic files.
 

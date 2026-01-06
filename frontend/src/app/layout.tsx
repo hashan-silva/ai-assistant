@@ -1,30 +1,38 @@
-import '@/src/styles/globals.css';
-import type { Metadata } from 'next';
-import { ReactNode } from 'react';
+import '@/styles/globals.scss';
+import type {ReactNode} from 'react';
+import type {Metadata} from 'next';
+import {headers} from 'next/headers';
+import AppProviders from '@/components/AppProviders';
+import AppShell from '@/components/AppShell';
+import {defaultLocale} from '@/i18n/routing';
+import {getRequestLocale, getTranslator, loadMessages} from '@/i18n/translator';
 
-export const metadata: Metadata = {
-  title: 'Helpclub Marketplace',
-  description: 'Connect clients and freelancers globally'
-};
+export const dynamic = 'force-dynamic';
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslator(defaultLocale, 'app');
+
+  return {
+    title: t('name'),
+    description: t('metaDescription')
+  };
+}
+
+export default async function RootLayout({
+  children
+}: {
+  children: ReactNode;
+}) {
+  const headerLocale = headers().get('accept-language');
+  const locale = getRequestLocale(headerLocale);
+  const messages = await loadMessages(locale);
+
   return (
-    <html lang="en">
-      <body className="bg-slate-50 text-slate-900">
-        <header className="border-b border-slate-200 bg-white">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-            <span className="text-lg font-semibold">Helpclub</span>
-            <nav className="space-x-4 text-sm">
-              <a href="/" className="hover:underline">
-                Marketplace
-              </a>
-              <a href="/projects" className="hover:underline">
-                Projects
-              </a>
-            </nav>
-          </div>
-        </header>
-        <main className="mx-auto max-w-5xl px-6 py-10">{children}</main>
+    <html lang={locale}>
+      <body>
+        <AppProviders locale={locale} messages={messages}>
+          <AppShell>{children}</AppShell>
+        </AppProviders>
       </body>
     </html>
   );

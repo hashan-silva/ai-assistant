@@ -3,6 +3,9 @@ node_modules/
 .next/
 .next.cache/
 *.log
+.env
+.env.local
+.env.*.local
 
 # Java
 backend/target/

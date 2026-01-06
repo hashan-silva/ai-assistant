@@ -1,0 +1,78 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+    container_name: helpclub-frontend
+    user: "1000:1000"
+    environment:
+      API_BASE_URL: http://backend:8080
+    ports:
+      - "3000:3000"
+  backend:
+    build:
+      context: ./backend
+    container_name: helpclub-backend
+    user: "1000:1000"
+    environment:
+      OLLAMA_BASE_URL: http://ollama:11434
+    ports:
+      - "8080:8080"
+  ollama:
+    image: ollama/ollama:latest
+    container_name: helpclub-ollama
+    user: "1000:1000"
+    ports:
+      - "11434:11434"
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull llama3.1; wait"
+      ]
+    environment:
+      HOME: /tmp
+      OLLAMA_HOME: /tmp/ollama
+    volumes:
+      - ollama:/tmp/ollama
+    profiles:
+      - cpu
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  ollama-gpu:
+    image: ollama/ollama:latest
+    container_name: helpclub-ollama-gpu
+    user: "1000:1000"
+    ports:
+      - "11434:11434"
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull llama3.1; wait"
+      ]
+    environment:
+      HOME: /tmp
+      OLLAMA_HOME: /tmp/ollama
+    volumes:
+      - ollama:/tmp/ollama
+    profiles:
+      - gpu
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: ["gpu"]
+
+volumes:
+  ollama:

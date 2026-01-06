@@ -1,0 +1,270 @@
+{
+  "app": {
+    "name": "Helpclub",
+    "tagline": "Nordic care with a clear path forward",
+    "metaDescription": "Helpclub brings programs, community, and support together for teams building stronger local networks across the Nordics."
+  },
+  "nav": {
+    "home": "Overview",
+    "programs": "Programs",
+    "community": "Community",
+    "chat": "Chat",
+    "support": "Support",
+    "impact": "Impact",
+    "profile": "Profile"
+  },
+  "common": {
+    "language": "Language",
+    "primaryAction": "View today's plan",
+    "secondaryAction": "Explore programs"
+  },
+  "home": {
+    "heroTitle": "A Nordic home for care and opportunity",
+    "heroBody": "Helpclub connects people, advisors, and local resources across the region. Build rhythm, track goals, and share progress in a trusted space.",
+    "spotlightTitle": "Today's focus",
+    "spotlightBody": "Safe start: gather needs, match mentors, and align next steps with the local team.",
+    "scheduleTitle": "Today's agenda",
+    "scheduleItems": {
+      "one": "09:00 Volunteer coordination",
+      "two": "11:30 Individual check-ins",
+      "three": "15:00 Review weekly goals"
+    },
+    "statsTitle": "Regional snapshot",
+    "stats": {
+      "members": "Active members",
+      "partners": "Municipal partners",
+      "sessions": "Support sessions this month",
+      "satisfaction": "Satisfaction index"
+    },
+    "highlightsTitle": "Quick views",
+    "highlights": {
+      "care": {
+        "title": "Care teams",
+        "body": "Coordinate contacts and share assignments in real time."
+      },
+      "skills": {
+        "title": "Skill pathways",
+        "body": "Track training, certifications, and next steps."
+      },
+      "partnerships": {
+        "title": "Partnerships",
+        "body": "Keep local collaborations aligned in one view."
+      }
+    }
+  },
+  "programs": {
+    "title": "Program overview",
+    "subtitle": "Modules for onboarding, wellbeing, and community building.",
+    "cards": {
+      "mentorship": {
+        "title": "Mentorship",
+        "body": "Match participants with guides, schedule sessions, and track goals.",
+        "tag": "Active"
+      },
+      "language": {
+        "title": "Language & daily life",
+        "body": "Support language practice, civic knowledge, and local routines.",
+        "tag": "New"
+      },
+      "wellbeing": {
+        "title": "Wellbeing",
+        "body": "Build safety with structured check-ins and resources.",
+        "tag": "Priority"
+      },
+      "career": {
+        "title": "Work readiness",
+        "body": "Plan internships, CV sessions, and employer connections.",
+        "tag": "Planned"
+      }
+    }
+  },
+  "community": {
+    "title": "Community",
+    "subtitle": "Grow relationships through local activities and open forums.",
+    "events": {
+      "circle": {
+        "title": "Local discussion circles",
+        "body": "Weekly gatherings focused on safety and participation.",
+        "time": "Wednesdays 18:00"
+      },
+      "makers": {
+        "title": "Makerspace",
+        "body": "Build together and share hands-on skills.",
+        "time": "Fridays 15:00"
+      },
+      "outdoor": {
+        "title": "Outdoor day",
+        "body": "Group hike with fika and reflection.",
+        "time": "Saturday 10:00"
+      }
+    }
+  },
+  "chat": {
+    "brand": "Helpclub AI",
+    "title": "Care coordination chat",
+    "subtitle": "Live rooms for triage, onboarding, and partner alignment.",
+    "sidebarTitle": "Active rooms",
+    "membersLabel": "members",
+    "status": {
+      "live": "Live"
+    },
+    "actions": {
+      "more": "More options"
+    },
+    "presence": "6 people online, response time under 2 min.",
+    "avatars": {
+      "one": "L",
+      "two": "A",
+      "three": "S",
+      "four": "M"
+    },
+    "quickRepliesTitle": "Quick replies",
+    "composerPlaceholder": "Write an update, ask for coverage, or tag someone...",
+    "sendLabel": "Send update",
+    "time": {
+      "now": "Now"
+    },
+    "people": {
+      "you": "You",
+      "assistant": "Helpclub AI assistant",
+      "lisa": "Lisa Nordin",
+      "otto": "Otto Berg",
+      "mila": "Mila Ek",
+      "jonas": "Jonas Holm",
+      "elin": "Elin Sjostrom",
+      "samir": "Samir Aziz"
+    },
+    "rooms": {
+      "care": {
+        "name": "Care triage",
+        "topic": "Escalations and next steps for today's cases.",
+        "status": "On duty"
+      },
+      "onboarding": {
+        "name": "Onboarding flow",
+        "topic": "Warm handoffs, checklists, and first-week tasks.",
+        "status": "Mentors"
+      },
+      "partners": {
+        "name": "Partner desk",
+        "topic": "Municipal check-ins and shared capacity.",
+        "status": "Partners"
+      }
+    },
+    "focus": {
+      "title": "Shift focus",
+      "one": "Confirm escalation coverage for the afternoon shift.",
+      "two": "Send onboarding checklist to municipal leads.",
+      "three": "Capture two success stories for the weekly report."
+    },
+    "messages": {
+      "care": {
+        "one": "We have two new referrals from Umea. Can we confirm transport?",
+        "two": "I can take the transport call. Any medical notes I should flag?",
+        "three": "Yes, asthma note in profile and needs Swedish interpreter."
+      },
+      "onboarding": {
+        "one": "New cohort starts Monday. Do we have the welcome kit ready?",
+        "two": "I will finalize the kit today and send the checklist.",
+        "three": "Great. I'll brief the mentors at 14:00."
+      },
+      "partners": {
+        "one": "Gothenburg team asked for a joint session next week.",
+        "two": "Let's offer Wednesday morning and share the agenda.",
+        "three": "I will confirm the slot and update the shared calendar."
+      }
+    },
+    "quickReplies": {
+      "checkin": "Checking in on open cases.",
+      "summary": "Sharing a quick status summary.",
+      "schedule": "Can we align on the schedule?"
+    },
+    "autoReplies": {
+      "care": "I can loop in the nurse coordinator and draft the update.",
+      "onboarding": "On it. I'll post the final checklist in 15 minutes.",
+      "partners": "I will notify the municipality and confirm the call time."
+    },
+    "errors": {
+      "requestFailed": "Couldn't reach the Helpclub AI assistant. Try again.",
+      "emptyReply": "The Helpclub AI assistant did not return a reply."
+    }
+  },
+  "support": {
+    "title": "Support center",
+    "subtitle": "Resources and contact paths for safe delivery.",
+    "resources": {
+      "care": {
+        "title": "Crisis support",
+        "body": "Rapid escalation, hotline numbers, and guidance.",
+        "cta": "View playbook"
+      },
+      "legal": {
+        "title": "Rights",
+        "body": "Unified guidance on regulations and local policies.",
+        "cta": "Learn more"
+      },
+      "funding": {
+        "title": "Funding",
+        "body": "Overview of local grants, stipends, and aid.",
+        "cta": "Explore"
+      }
+    },
+    "contact": {
+      "title": "Contact",
+      "body": "Message the team or schedule a follow-up."
+    }
+  },
+  "impact": {
+    "title": "Impact",
+    "subtitle": "Tracking safety, participation, and long-term outcomes.",
+    "metrics": {
+      "engagement": {
+        "title": "Engagement",
+        "body": "Share of participants meeting weekly goals.",
+        "value": "82%"
+      },
+      "continuity": {
+        "title": "Continuity",
+        "body": "Programs staying on schedule.",
+        "value": "91%"
+      },
+      "capacity": {
+        "title": "Capacity",
+        "body": "Available support slots per region.",
+        "value": "24"
+      },
+      "wellbeing": {
+        "title": "Wellbeing",
+        "body": "Positive self-reported wellbeing.",
+        "value": "4.6/5"
+      }
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "A single view of your role, tasks, and goals.",
+    "summary": {
+      "nameLabel": "Role",
+      "nameValue": "Regional coordinator",
+      "regionLabel": "Region",
+      "regionValue": "Sweden, West",
+      "statusLabel": "Status",
+      "statusValue": "Active"
+    },
+    "nextSteps": {
+      "title": "Next steps",
+      "one": "Confirm mentorship matches for new participants.",
+      "two": "Plan next week's community activity.",
+      "three": "Follow up on the wellbeing pulse survey."
+    }
+  },
+  "footer": {
+    "title": "Building safer communities",
+    "body": "Helpclub supports local teams across the Nordics with planning, coordination, and follow-up.",
+    "links": {
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "contact": "Contact"
+    }
+  }
+}
