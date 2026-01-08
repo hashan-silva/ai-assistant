@@ -25,7 +25,7 @@ Helpclub is evolving into a hiring platform that connects job seekers with job p
 backend/    # Spring Boot service with Maven build
 frontend/   # Next.js application
 database/   # Oracle DDL + seed SQL
-terraform/  # Modules and environment stack (envs/helpclub)
+terraform/  # Modules and root Terraform stack
 ```
 
 ## Local development
@@ -42,16 +42,16 @@ cd frontend && npm install && npm run dev
 docker compose up --build
 ```
 
-Clone the repo, install dependencies (`mvn`, `npm`), and target the Terraform environment under `terraform/envs/helpclub` when deploying.
+Clone the repo, install dependencies (`mvn`, `npm`), and target the Terraform stack under `terraform/` when deploying.
 
 ## Terraform deployment
 
-Reusable modules for OCI networking, compute, Oracle Autonomous Database, and environment stack under `terraform/envs/helpclub`. State is managed in Terraform Cloud.
+Reusable modules for OCI networking, compute, Oracle Autonomous Database, and root stack under `terraform/`. State is managed in Terraform Cloud.
 
 ```bash
-cd terraform/envs/helpclub
+cd terraform
 terraform init
 terraform plan
 ```
 
-Terraform Cloud workspace: `helpclub-main` (organization `helpclub`).
+Terraform Cloud workspace: `helpclub-main` (organization `hashan-silva`).

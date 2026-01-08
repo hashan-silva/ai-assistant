@@ -4,7 +4,7 @@
 - `backend/` – Spring Boot service (Maven) with domain logic under `src/main/java`, configuration + Flyway migrations under `src/main/resources`, and tests in `src/test/java`.
 - `frontend/` – Next.js 14 + TypeScript app with Material UI, SCSS, and next-intl; routes live in `src/app`, shared UI in `src/components`, utilities in `src/lib`, styles in `src/styles`, and static assets in `public/`.
 - `database/` – Oracle DDL in `schema/` and deterministic seed SQL in `seeds/`, mirrored by Flyway scripts.
-- `terraform/` – Modules for `network`, `compute`, `database`, `cicd` plus environment stack under `envs/helpclub`; each module follows the `main.tf`, `variables.tf`, `outputs.tf` convention for clarity.
+- `terraform/` – Modules for `network`, `compute`, `database`, `cicd` plus root stack under `terraform/`; each module follows the `main.tf`, `variables.tf`, `outputs.tf` convention for clarity.
 
 ## Product Direction & Core Flows
 - Helpclub is a hiring platform that connects job seekers with job posters.
@@ -17,7 +17,7 @@
 - `cd backend && mvn test` – run unit/integration tests via JUnit 5.
 - `cd frontend && npm install && npm run dev` – launch the Next.js dev server on `http://localhost:3000`.
 - `cd frontend && npm run build` – production build used by Docker and Terraform deploys.
-- `cd terraform/envs/<env> && terraform init && terraform plan` – validate infrastructure changes per environment.
+- `cd terraform && terraform init && terraform plan` – validate infrastructure changes.
 
 ## Deployment & Automation
 - Deployments are automated via GitHub Actions only; do not run manual Docker or Terraform applies.

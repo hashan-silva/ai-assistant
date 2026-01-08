@@ -81,30 +81,34 @@ jobs:
         with:
           terraform_version: 1.6.6
 
-      - name: Write OCI API key
-        run: |
-          mkdir -p ~/.oci
-          echo "${{ secrets.OCI_PRIVATE_KEY }}" > ~/.oci/oci_api_key.pem
-          chmod 600 ~/.oci/oci_api_key.pem
-
       - name: Terraform init
-        working-directory: terraform/envs/helpclub
+        working-directory: terraform
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+          TF_WORKSPACE: main
         run: terraform init
 
+      - name: Write Terraform variables
+        working-directory: terraform
+        run: |
+          cat > ci.auto.tfvars <<EOF
+          tenancy_ocid     = "${{ secrets.OCI_TENANCY_OCID }}"
+          user_ocid        = "${{ secrets.OCI_USER_OCID }}"
+          fingerprint      = "${{ secrets.OCI_FINGERPRINT }}"
+          private_key      = <<KEY
+          ${{ secrets.OCI_PRIVATE_KEY }}
+          KEY
+          region           = "${{ secrets.OCI_REGION }}"
+          compartment_ocid = "${{ secrets.OCI_COMPARTMENT_OCID }}"
+          ssh_public_key   = "${{ secrets.OCI_SSH_PUBLIC_KEY }}"
+          frontend_image   = "${{ env.FRONTEND_IMAGE }}:latest"
+          backend_image    = "${{ env.BACKEND_IMAGE }}:latest"
+          ollama_image     = "${{ secrets.OCI_OLLAMA_IMAGE || 'ollama/ollama:latest' }}"
+          EOF
+
       - name: Terraform apply
-        working-directory: terraform/envs/helpclub
+        working-directory: terraform
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
-          TF_VAR_tenancy_ocid: ${{ secrets.OCI_TENANCY_OCID }}
-          TF_VAR_user_ocid: ${{ secrets.OCI_USER_OCID }}
-          TF_VAR_fingerprint: ${{ secrets.OCI_FINGERPRINT }}
-          TF_VAR_private_key_path: ~/.oci/oci_api_key.pem
-          TF_VAR_region: ${{ secrets.OCI_REGION }}
-          TF_VAR_compartment_ocid: ${{ secrets.OCI_COMPARTMENT_OCID }}
-          TF_VAR_ssh_public_key: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
-          TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE }}:latest
-          TF_VAR_backend_image: ${{ env.BACKEND_IMAGE }}:latest
-          TF_VAR_ollama_image: ${{ secrets.OCI_OLLAMA_IMAGE || 'ollama/ollama:latest' }}
+          TF_WORKSPACE: main
         run: terraform apply -auto-approve
