@@ -86,29 +86,31 @@ jobs:
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
           TF_WORKSPACE: main
+          TF_VAR_tenancy_ocid: ${{ secrets.OCI_TENANCY_OCID }}
+          TF_VAR_user_ocid: ${{ secrets.OCI_USER_OCID }}
+          TF_VAR_fingerprint: ${{ secrets.OCI_FINGERPRINT }}
+          TF_VAR_private_key: ${{ secrets.OCI_PRIVATE_KEY }}
+          TF_VAR_region: ${{ secrets.OCI_REGION }}
+          TF_VAR_compartment_ocid: ${{ secrets.OCI_COMPARTMENT_OCID }}
+          TF_VAR_ssh_public_key: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
+          TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE }}:latest
+          TF_VAR_backend_image: ${{ env.BACKEND_IMAGE }}:latest
+          TF_VAR_ollama_image: ${{ secrets.OCI_OLLAMA_IMAGE || 'ollama/ollama:latest' }}
         run: terraform init
-
-      - name: Write Terraform variables
-        working-directory: terraform
-        run: |
-          cat > ci.auto.tfvars <<EOF
-          tenancy_ocid     = "${{ secrets.OCI_TENANCY_OCID }}"
-          user_ocid        = "${{ secrets.OCI_USER_OCID }}"
-          fingerprint      = "${{ secrets.OCI_FINGERPRINT }}"
-          private_key      = <<KEY
-          ${{ secrets.OCI_PRIVATE_KEY }}
-          KEY
-          region           = "${{ secrets.OCI_REGION }}"
-          compartment_ocid = "${{ secrets.OCI_COMPARTMENT_OCID }}"
-          ssh_public_key   = "${{ secrets.OCI_SSH_PUBLIC_KEY }}"
-          frontend_image   = "${{ env.FRONTEND_IMAGE }}:latest"
-          backend_image    = "${{ env.BACKEND_IMAGE }}:latest"
-          ollama_image     = "${{ secrets.OCI_OLLAMA_IMAGE || 'ollama/ollama:latest' }}"
-          EOF
 
       - name: Terraform apply
         working-directory: terraform
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
           TF_WORKSPACE: main
+          TF_VAR_tenancy_ocid: ${{ secrets.OCI_TENANCY_OCID }}
+          TF_VAR_user_ocid: ${{ secrets.OCI_USER_OCID }}
+          TF_VAR_fingerprint: ${{ secrets.OCI_FINGERPRINT }}
+          TF_VAR_private_key: ${{ secrets.OCI_PRIVATE_KEY }}
+          TF_VAR_region: ${{ secrets.OCI_REGION }}
+          TF_VAR_compartment_ocid: ${{ secrets.OCI_COMPARTMENT_OCID }}
+          TF_VAR_ssh_public_key: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
+          TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE }}:latest
+          TF_VAR_backend_image: ${{ env.BACKEND_IMAGE }}:latest
+          TF_VAR_ollama_image: ${{ secrets.OCI_OLLAMA_IMAGE || 'ollama/ollama:latest' }}
         run: terraform apply -auto-approve
