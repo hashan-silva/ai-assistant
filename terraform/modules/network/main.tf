@@ -1,5 +1,5 @@
 locals {
-  raw_vcn_dns_label = regexreplace(lower("${var.project}${var.environment}"), "[^a-z0-9]", "")
+  raw_vcn_dns_label = replace(lower("${var.project}${var.environment}"), "/[^a-z0-9]/", "")
   vcn_dns_label     = substr("v${local.raw_vcn_dns_label}", 0, 15)
 }
 
