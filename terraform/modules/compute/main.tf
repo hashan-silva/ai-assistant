@@ -24,7 +24,7 @@ resource "oci_core_instance" "this" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
-    user_data           = base64encode(templatefile("${path.module}/user_data.sh.tftpl", {
+    user_data = base64encode(templatefile("${path.module}/user_data.sh.tftpl", {
       backend_image  = var.backend_image
       frontend_image = var.frontend_image
       ollama_image   = var.ollama_image
