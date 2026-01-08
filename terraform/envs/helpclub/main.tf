@@ -7,7 +7,7 @@ terraform {
     }
   }
   backend "remote" {
-    organization = "helpclub"
+    organization = "hashan-silva"
     workspaces {
       name = "helpclub-main"
     }

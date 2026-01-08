@@ -2,7 +2,7 @@ name: Deploy to OCI
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "v*"]
     paths:
       - 'backend/**'
       - 'frontend/**'
@@ -43,7 +43,7 @@ jobs:
           images: ${{ env.BACKEND_IMAGE }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=sha,format=long
+            type=ref,event=branch,enable={{startsWith .ref 'refs/heads/v'}}
 
       - name: Extract frontend metadata
         id: meta-frontend
@@ -52,7 +52,7 @@ jobs:
           images: ${{ env.FRONTEND_IMAGE }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=sha,format=long
+            type=ref,event=branch,enable={{startsWith .ref 'refs/heads/v'}}
 
       - name: Build and push backend
         uses: docker/build-push-action@v6
@@ -104,7 +104,7 @@ jobs:
           TF_VAR_region: ${{ secrets.OCI_REGION }}
           TF_VAR_compartment_ocid: ${{ secrets.OCI_COMPARTMENT_OCID }}
           TF_VAR_ssh_public_key: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
-          TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE }}:${{ steps.meta-frontend.outputs.version }}
-          TF_VAR_backend_image: ${{ env.BACKEND_IMAGE }}:${{ steps.meta-backend.outputs.version }}
+          TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE }}:latest
+          TF_VAR_backend_image: ${{ env.BACKEND_IMAGE }}:latest
           TF_VAR_ollama_image: ${{ secrets.OCI_OLLAMA_IMAGE || 'ollama/ollama:latest' }}
         run: terraform apply -auto-approve
