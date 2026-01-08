@@ -1,8 +1,13 @@
+locals {
+  raw_vcn_dns_label = regexreplace(lower("${var.project}${var.environment}"), "[^a-z0-9]", "")
+  vcn_dns_label     = substr("v${local.raw_vcn_dns_label}", 0, 15)
+}
+
 resource "oci_core_vcn" "this" {
   compartment_id = var.compartment_id
   cidr_block     = var.vcn_cidr
   display_name   = "${var.project}-${var.environment}-vcn"
-  dns_label      = "${var.project}${var.environment}"
+  dns_label      = local.vcn_dns_label
 }
 
 resource "oci_core_internet_gateway" "this" {
