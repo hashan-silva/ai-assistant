@@ -1,3 +1,3 @@
-output "pipeline_name" {
-  value = aws_codepipeline.this.name
+output "project_id" {
+  value = oci_devops_project.this.id
 }

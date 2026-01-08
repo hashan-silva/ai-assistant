@@ -1,0 +1,25 @@
+#!/bin/bash
+set -euo pipefail
+
+dnf -y install docker
+systemctl enable --now docker
+
+docker network create helpclub || true
+
+docker pull ${ollama_image}
+docker pull ${backend_image}
+docker pull ${frontend_image}
+
+docker run -d --restart=always --name helpclub-ollama --network helpclub \
+  -p 11434:11434 \
+  ${ollama_image}
+
+docker run -d --restart=always --name helpclub-backend --network helpclub \
+  -p 8080:8080 \
+  -e OLLAMA_BASE_URL=http://helpclub-ollama:11434 \
+  ${backend_image}
+
+docker run -d --restart=always --name helpclub-frontend --network helpclub \
+  -p 3000:3000 \
+  -e NEXT_PUBLIC_API_BASE_URL=http://helpclub-backend:8080 \
+  ${frontend_image}
