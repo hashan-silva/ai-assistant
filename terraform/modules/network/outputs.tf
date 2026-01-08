@@ -1,3 +1,7 @@
-output "vpc_id" {
-  value = aws_vpc.this.id
+output "vcn_id" {
+  value = oci_core_vcn.this.id
+}
+
+output "subnet_id" {
+  value = oci_core_subnet.public.id
 }

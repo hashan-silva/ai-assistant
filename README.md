@@ -2,13 +2,15 @@
 
 Helpclub is evolving into a hiring platform that connects job seekers with job posters through a single ChatGPT-style experience. Job posters chat with an AI agent to capture requirements, generate a structured job post JSON, and receive suggested candidates based on skills. Job seekers create profiles via AI chat and get email notifications when new jobs match their skills.
 
+[![Terraform Lint & Security](https://github.com/hashan-silva/helpclub/actions/workflows/terraform-ci.yml/badge.svg)](https://github.com/hashan-silva/helpclub/actions/workflows/terraform-ci.yml)
+
 ## Stack
 
 - **Backend** – Spring Boot (Maven), Oracle DB, Flyway migrations
 - **Frontend** – Next.js 14 + TypeScript + Material UI + SCSS + next-intl
 - **AI** – Ollama for chat-driven job post and profile creation
 - **Database** – Oracle schema + seeds for local development
-- **Terraform** – IaC for AWS networking, compute, database, and CI/CD
+- **Terraform** – IaC for OCI networking, compute, and database
 
 ## Core flows
 
@@ -22,7 +24,7 @@ Helpclub is evolving into a hiring platform that connects job seekers with job p
 backend/    # Spring Boot service with Maven build
 frontend/   # Next.js application
 database/   # Oracle DDL + seed SQL
-terraform/  # Modules and environment stacks (dev/prod)
+terraform/  # Modules and environment stack (envs/helpclub)
 ```
 
 ## Local development
@@ -39,4 +41,16 @@ cd frontend && npm install && npm run dev
 docker compose up --build
 ```
 
-Clone the repo, install dependencies (`mvn`, `npm`), and target the appropriate Terraform environment under `terraform/envs/` when deploying.
+Clone the repo, install dependencies (`mvn`, `npm`), and target the Terraform environment under `terraform/envs/helpclub` when deploying.
+
+## Terraform deployment
+
+Reusable modules for OCI networking, compute, Oracle Autonomous Database, and environment stack under `terraform/envs/helpclub`. State is managed in Terraform Cloud.
+
+```bash
+cd terraform/envs/helpclub
+terraform init
+terraform plan
+```
+
+Terraform Cloud workspace: `helpclub-main` (organization `helpclub`).
