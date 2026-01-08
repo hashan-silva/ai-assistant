@@ -42,8 +42,8 @@ jobs:
         with:
           images: ${{ env.BACKEND_IMAGE }}
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=ref,event=branch,enable={{startsWith .ref 'refs/heads/v'}}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=ref,event=branch,enable=${{ startsWith(github.ref, 'refs/heads/v') }}
 
       - name: Extract frontend metadata
         id: meta-frontend
@@ -51,8 +51,8 @@ jobs:
         with:
           images: ${{ env.FRONTEND_IMAGE }}
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=ref,event=branch,enable={{startsWith .ref 'refs/heads/v'}}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=ref,event=branch,enable=${{ startsWith(github.ref, 'refs/heads/v') }}
 
       - name: Build and push backend
         uses: docker/build-push-action@v6
