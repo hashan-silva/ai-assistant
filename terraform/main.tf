@@ -1,29 +1,5 @@
-terraform {
-  required_version = ">= 1.6.0"
-  required_providers {
-    oci = {
-      source  = "oracle/oci"
-      version = "~> 5.25"
-    }
-  }
-  backend "remote" {
-    organization = "hashan-silva"
-    workspaces {
-      name = "helpclub-main"
-    }
-  }
-}
-
-provider "oci" {
-  tenancy_ocid     = var.tenancy_ocid
-  user_ocid        = var.user_ocid
-  fingerprint      = var.fingerprint
-  private_key_path = var.private_key_path
-  region           = var.region
-}
-
 module "network" {
-  source         = "../../modules/network"
+  source         = "./modules/network"
   project        = var.project
   environment    = var.environment
   compartment_id = var.compartment_ocid
@@ -32,7 +8,7 @@ module "network" {
 }
 
 module "compute" {
-  source         = "../../modules/compute"
+  source         = "./modules/compute"
   project        = var.project
   environment    = var.environment
   tenancy_ocid   = var.tenancy_ocid

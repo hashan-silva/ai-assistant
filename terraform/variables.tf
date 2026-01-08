@@ -20,8 +20,9 @@ variable "fingerprint" {
   type = string
 }
 
-variable "private_key_path" {
-  type = string
+variable "private_key" {
+  type      = string
+  sensitive = true
 }
 
 variable "region" {
