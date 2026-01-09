@@ -32,8 +32,8 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
-          java-version: "17"
+          distribution: "corretto"
+          java-version: "21"
 
       - name: Build backend bytecode
         run: mvn -f backend/pom.xml -DskipTests package
