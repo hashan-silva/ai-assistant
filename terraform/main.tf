@@ -24,7 +24,7 @@ module "iam" {
   source                  = "./modules/iam"
   project                 = var.project
   environment             = var.environment
-  ecs_cluster_name         = module.compute.cluster_name
-  ecs_service_name         = module.compute.service_name
-  task_execution_role_arn  = module.compute.task_execution_role_arn
+  ecs_cluster_name        = module.compute.cluster_name
+  ecs_service_name        = module.compute.service_name
+  task_execution_role_arn = module.compute.task_execution_role_arn
 }
