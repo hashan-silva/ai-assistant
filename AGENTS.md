@@ -4,7 +4,7 @@
 - `backend/` – Spring Boot service (Maven) with domain logic under `src/main/java`, configuration + Flyway migrations under `src/main/resources`, and tests in `src/test/java`.
 - `frontend/` – Next.js 14 + TypeScript app with Material UI, SCSS, and next-intl; routes live in `src/app`, shared UI in `src/components`, utilities in `src/lib`, styles in `src/styles`, and static assets in `public/`.
 - `database/` – Oracle DDL in `schema/` and deterministic seed SQL in `seeds/`, mirrored by Flyway scripts.
-- `terraform/` – Modules for `network`, `compute`, `database`, `cicd` plus root stack under `terraform/`; each module follows the `main.tf`, `variables.tf`, `outputs.tf` convention for clarity.
+- `terraform/` – Modules for `network`, `compute`, `cicd`, `iam` plus root stack under `terraform/`; each module follows the `main.tf`, `variables.tf`, `outputs.tf` convention for clarity.
 
 ## Product Direction & Core Flows
 - Helpclub is a hiring platform that connects job seekers with job posters.
@@ -23,6 +23,8 @@
 - Deployments are automated via GitHub Actions only; do not run manual Docker or Terraform applies.
 - Docker images are built in CI and deployed via Terraform from the pipeline.
 - Treat Terraform runs as CI-owned; local usage should be limited to `terraform plan` for validation.
+- AWS deployments must use serverless components (ECS Fargate, ALB, Aurora Serverless v2) instead of EC2.
+- IAM users must be scoped to least-privilege policies for the specific deployment actions they need.
 
 ## Coding Style & Naming Conventions
 - Java: 4-space indentation, package names `com.helpclub.*`, classes in `PascalCase`, Spring components annotated explicitly. Auto-format with `mvn fmt:format` if added.
@@ -43,6 +45,7 @@
 - Configure Terraform remote state (S3 + DynamoDB or equivalent) before running `apply` to avoid drift.
 - Keep secrets in `.tfvars` files that are gitignored; share sample templates (e.g., `dev.tfvars.example`) when needed.
 - Dockerfiles expect multi-stage builds; ensure CI caches dependencies or uses registry-based build cache to reduce deployment time.
+- Store AWS IAM access keys in CI secrets only; do not commit them to the repo.
 
 ## MCP-First Workflow Expectations
 - Prefer MCP servers when inspecting the Next.js app: start the dev server and connect via the Next.js MCP endpoint before reading files manually. Use MCP tools to list routes, inspect build errors, and gather diagnostics.

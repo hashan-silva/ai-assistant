@@ -1,88 +1,52 @@
-locals {
-  raw_vcn_dns_label = replace(lower("${var.project}${var.environment}"), "/[^a-z0-9]/", "")
-  vcn_dns_label     = substr("v${local.raw_vcn_dns_label}", 0, 15)
+data "aws_availability_zones" "available" {
+  state = "available"
 }
 
-resource "oci_core_vcn" "this" {
-  compartment_id = var.compartment_id
-  cidr_block     = var.vcn_cidr
-  display_name   = "${var.project}-${var.environment}-vcn"
-  dns_label      = local.vcn_dns_label
-}
+resource "aws_vpc" "this" {
+  cidr_block           = var.vpc_cidr
+  enable_dns_support   = true
+  enable_dns_hostnames = true
 
-resource "oci_core_internet_gateway" "this" {
-  compartment_id = var.compartment_id
-  vcn_id         = oci_core_vcn.this.id
-  display_name   = "${var.project}-${var.environment}-igw"
-  enabled        = true
-}
-
-resource "oci_core_route_table" "this" {
-  compartment_id = var.compartment_id
-  vcn_id         = oci_core_vcn.this.id
-  display_name   = "${var.project}-${var.environment}-rt"
-
-  route_rules {
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_internet_gateway.this.id
+  tags = {
+    Name = "${var.project}-${var.environment}-vpc"
   }
 }
 
-resource "oci_core_security_list" "public" {
-  compartment_id = var.compartment_id
-  vcn_id         = oci_core_vcn.this.id
-  display_name   = "${var.project}-${var.environment}-public-sl"
+resource "aws_internet_gateway" "this" {
+  vpc_id = aws_vpc.this.id
 
-  egress_security_rules {
-    protocol    = "all"
-    destination = "0.0.0.0/0"
-  }
-
-  ingress_security_rules {
-    protocol = "6"
-    source   = "0.0.0.0/0"
-    tcp_options {
-      min = 22
-      max = 22
-    }
-  }
-
-  ingress_security_rules {
-    protocol = "6"
-    source   = "0.0.0.0/0"
-    tcp_options {
-      min = 3000
-      max = 3000
-    }
-  }
-
-  ingress_security_rules {
-    protocol = "6"
-    source   = "0.0.0.0/0"
-    tcp_options {
-      min = 8080
-      max = 8080
-    }
-  }
-
-  ingress_security_rules {
-    protocol = "6"
-    source   = "0.0.0.0/0"
-    tcp_options {
-      min = 11434
-      max = 11434
-    }
+  tags = {
+    Name = "${var.project}-${var.environment}-igw"
   }
 }
 
-resource "oci_core_subnet" "public" {
-  compartment_id             = var.compartment_id
-  vcn_id                     = oci_core_vcn.this.id
-  cidr_block                 = var.subnet_cidr
-  display_name               = "${var.project}-${var.environment}-public-subnet"
-  dns_label                  = "public"
-  route_table_id             = oci_core_route_table.this.id
-  security_list_ids          = [oci_core_security_list.public.id]
-  prohibit_public_ip_on_vnic = false
+resource "aws_subnet" "public" {
+  count                   = length(var.public_subnet_cidrs)
+  vpc_id                  = aws_vpc.this.id
+  cidr_block              = var.public_subnet_cidrs[count.index]
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "${var.project}-${var.environment}-public-${count.index + 1}"
+  }
+}
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.this.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.this.id
+  }
+
+  tags = {
+    Name = "${var.project}-${var.environment}-public-rt"
+  }
+}
+
+resource "aws_route_table_association" "public" {
+  count          = length(aws_subnet.public)
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public.id
 }

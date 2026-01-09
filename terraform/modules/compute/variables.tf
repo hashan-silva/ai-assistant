@@ -6,26 +6,12 @@ variable "environment" {
   type = string
 }
 
-variable "tenancy_ocid" {
+variable "vpc_id" {
   type = string
 }
 
-variable "compartment_id" {
-  type = string
-}
-
-
-variable "subnet_id" {
-  type = string
-}
-
-variable "instance_shape" {
-  type    = string
-  default = "VM.Standard.E4.Flex"
-}
-
-variable "ssh_public_key" {
-  type = string
+variable "subnet_ids" {
+  type = list(string)
 }
 
 variable "frontend_image" {
@@ -39,4 +25,24 @@ variable "backend_image" {
 variable "ollama_image" {
   type    = string
   default = "ollama/ollama:latest"
+}
+
+variable "task_cpu" {
+  type    = string
+  default = "1024"
+}
+
+variable "task_memory" {
+  type    = string
+  default = "2048"
+}
+
+variable "desired_count" {
+  type    = number
+  default = 1
+}
+
+variable "container_port" {
+  type    = number
+  default = 3000
 }

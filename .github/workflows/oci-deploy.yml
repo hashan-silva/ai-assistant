@@ -1,4 +1,4 @@
-name: Deploy to OCI
+name: Deploy to AWS
 
 on:
   push:
@@ -86,16 +86,13 @@ jobs:
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
           TF_WORKSPACE: main
-          TF_VAR_tenancy_ocid: ${{ secrets.OCI_TENANCY_OCID }}
-          TF_VAR_user_ocid: ${{ secrets.OCI_USER_OCID }}
-          TF_VAR_fingerprint: ${{ secrets.OCI_FINGERPRINT }}
-          TF_VAR_private_key: ${{ secrets.OCI_PRIVATE_KEY }}
-          TF_VAR_region: ${{ secrets.OCI_REGION }}
-          TF_VAR_compartment_ocid: ${{ secrets.OCI_COMPARTMENT_OCID }}
-          TF_VAR_ssh_public_key: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
           TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE }}:latest
           TF_VAR_backend_image: ${{ env.BACKEND_IMAGE }}:latest
-          TF_VAR_ollama_image: ${{ secrets.OCI_OLLAMA_IMAGE || 'ollama/ollama:latest' }}
+          TF_VAR_ollama_image: ${{ secrets.AWS_OLLAMA_IMAGE || 'ollama/ollama:latest' }}
         run: terraform init
 
       - name: Terraform apply
@@ -103,14 +100,11 @@ jobs:
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
           TF_WORKSPACE: main
-          TF_VAR_tenancy_ocid: ${{ secrets.OCI_TENANCY_OCID }}
-          TF_VAR_user_ocid: ${{ secrets.OCI_USER_OCID }}
-          TF_VAR_fingerprint: ${{ secrets.OCI_FINGERPRINT }}
-          TF_VAR_private_key: ${{ secrets.OCI_PRIVATE_KEY }}
-          TF_VAR_region: ${{ secrets.OCI_REGION }}
-          TF_VAR_compartment_ocid: ${{ secrets.OCI_COMPARTMENT_OCID }}
-          TF_VAR_ssh_public_key: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
           TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE }}:latest
           TF_VAR_backend_image: ${{ env.BACKEND_IMAGE }}:latest
-          TF_VAR_ollama_image: ${{ secrets.OCI_OLLAMA_IMAGE || 'ollama/ollama:latest' }}
+          TF_VAR_ollama_image: ${{ secrets.AWS_OLLAMA_IMAGE || 'ollama/ollama:latest' }}
         run: terraform apply -auto-approve
