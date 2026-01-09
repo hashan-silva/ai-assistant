@@ -34,6 +34,8 @@ jobs:
         run: terraform fmt -recursive -check
 
       - name: Install TFLint
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_CICD }}
         run: |
           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
           tflint --version
