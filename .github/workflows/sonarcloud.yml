@@ -8,13 +8,6 @@ on:
       - "frontend/**"
       - "terraform/**"
       - ".github/workflows/sonarcloud.yml"
-  pull_request:
-    branches: ["main"]
-    paths:
-      - "backend/**"
-      - "frontend/**"
-      - "terraform/**"
-      - ".github/workflows/sonarcloud.yml"
 
 permissions:
   contents: read
