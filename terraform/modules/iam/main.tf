@@ -1,10 +1,18 @@
+locals {
+  name_prefix = substr("${terraform.workspace}-${var.project}-${var.environment}", 0, 32)
+}
+
 resource "aws_iam_user" "deploy" {
-  name = "${var.project}-${var.environment}-deploy"
+  name = "${local.name_prefix}-deploy"
 }
 
 resource "aws_iam_access_key" "deploy" {
   user = aws_iam_user.deploy.name
 }
+
+data "aws_region" "current" {}
+
+data "aws_caller_identity" "current" {}
 
 data "aws_iam_policy_document" "deploy" {
   statement {
@@ -14,7 +22,7 @@ data "aws_iam_policy_document" "deploy" {
       "ecs:UpdateService"
     ]
     resources = [
-      var.ecs_service_arn
+      "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:service/${var.ecs_cluster_name}/${var.ecs_service_name}"
     ]
   }
 
@@ -48,7 +56,7 @@ data "aws_iam_policy_document" "deploy" {
 }
 
 resource "aws_iam_policy" "deploy" {
-  name   = "${var.project}-${var.environment}-deploy"
+  name   = "${local.name_prefix}-deploy"
   policy = data.aws_iam_policy_document.deploy.json
 }
 
