@@ -1,14 +1,18 @@
+locals {
+  name_prefix = substr("${terraform.workspace}-${var.project}-${var.environment}", 0, 26)
+}
+
 resource "aws_ecs_cluster" "this" {
-  name = "${var.project}-${var.environment}-cluster"
+  name = "${local.name_prefix}-cluster"
 }
 
 resource "aws_cloudwatch_log_group" "this" {
-  name              = "/ecs/${var.project}-${var.environment}"
+  name              = "/ecs/${local.name_prefix}"
   retention_in_days = 14
 }
 
 resource "aws_iam_role" "task_execution" {
-  name = "${var.project}-${var.environment}-ecs-task-exec"
+  name = "${local.name_prefix}-ecs-task-exec"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -30,13 +34,13 @@ resource "aws_iam_role_policy_attachment" "task_execution" {
 }
 
 resource "aws_security_group" "alb" {
-  name        = "${var.project}-${var.environment}-alb-sg"
+  name        = "${local.name_prefix}-alb-sg"
   description = "ALB ingress for helpclub frontend"
   vpc_id      = var.vpc_id
 }
 
 resource "aws_security_group" "service" {
-  name        = "${var.project}-${var.environment}-service-sg"
+  name        = "${local.name_prefix}-service-sg"
   description = "ECS service access from ALB"
   vpc_id      = var.vpc_id
 }
@@ -70,7 +74,7 @@ resource "aws_vpc_security_group_egress_rule" "service_all" {
 }
 
 resource "aws_lb" "this" {
-  name               = "${var.project}-${var.environment}-alb"
+  name               = "${local.name_prefix}-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
@@ -78,7 +82,7 @@ resource "aws_lb" "this" {
 }
 
 resource "aws_lb_target_group" "frontend" {
-  name        = "${var.project}-${var.environment}-tg"
+  name        = "${local.name_prefix}-tg"
   port        = var.container_port
   protocol    = "HTTP"
   target_type = "ip"
@@ -102,7 +106,7 @@ resource "aws_lb_listener" "http" {
 }
 
 resource "aws_ecs_task_definition" "this" {
-  family                   = "${var.project}-${var.environment}-task"
+  family                   = "${local.name_prefix}-task"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = var.task_cpu
@@ -185,7 +189,7 @@ resource "aws_ecs_task_definition" "this" {
 data "aws_region" "current" {}
 
 resource "aws_ecs_service" "this" {
-  name            = "${var.project}-${var.environment}-service"
+  name            = "${local.name_prefix}-service"
   cluster         = aws_ecs_cluster.this.id
   task_definition = aws_ecs_task_definition.this.arn
   desired_count   = var.desired_count
