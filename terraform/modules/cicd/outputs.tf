@@ -1,3 +1,3 @@
-output "project_id" {
-  value = oci_devops_project.this.id
+output "project_name" {
+  value = aws_codebuild_project.this.name
 }

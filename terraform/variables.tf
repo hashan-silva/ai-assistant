@@ -8,34 +8,9 @@ variable "environment" {
   default = "helpclub"
 }
 
-variable "tenancy_ocid" {
-  type = string
-}
-
-variable "user_ocid" {
-  type = string
-}
-
-variable "fingerprint" {
-  type = string
-}
-
-variable "private_key" {
-  type      = string
-  sensitive = true
-}
-
-variable "region" {
+variable "aws_region" {
   type    = string
-  default = "eu-stockholm-1"
-}
-
-variable "compartment_ocid" {
-  type = string
-}
-
-variable "ssh_public_key" {
-  type = string
+  default = "eu-north-1"
 }
 
 variable "frontend_image" {
@@ -51,17 +26,27 @@ variable "ollama_image" {
   default = "ollama/ollama:latest"
 }
 
-variable "instance_shape" {
-  type    = string
-  default = "VM.Standard.E4.Flex"
-}
-
-variable "vcn_cidr" {
+variable "vpc_cidr" {
   type    = string
   default = "10.0.0.0/16"
 }
 
-variable "subnet_cidr" {
+variable "public_subnet_cidrs" {
+  type    = list(string)
+  default = ["10.0.1.0/24", "10.0.2.0/24"]
+}
+
+variable "task_cpu" {
   type    = string
-  default = "10.0.2.0/24"
+  default = "1024"
+}
+
+variable "task_memory" {
+  type    = string
+  default = "2048"
+}
+
+variable "desired_count" {
+  type    = number
+  default = 1
 }

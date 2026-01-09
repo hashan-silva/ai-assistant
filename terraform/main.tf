@@ -1,22 +1,30 @@
 module "network" {
-  source         = "./modules/network"
-  project        = var.project
-  environment    = var.environment
-  compartment_id = var.compartment_ocid
-  vcn_cidr       = var.vcn_cidr
-  subnet_cidr    = var.subnet_cidr
+  source              = "./modules/network"
+  project             = var.project
+  environment         = var.environment
+  vpc_cidr            = var.vpc_cidr
+  public_subnet_cidrs = var.public_subnet_cidrs
 }
 
 module "compute" {
   source         = "./modules/compute"
   project        = var.project
   environment    = var.environment
-  tenancy_ocid   = var.tenancy_ocid
-  compartment_id = var.compartment_ocid
-  subnet_id      = module.network.subnet_id
-  instance_shape = var.instance_shape
-  ssh_public_key = var.ssh_public_key
+  vpc_id         = module.network.vpc_id
+  subnet_ids     = module.network.public_subnet_ids
   frontend_image = var.frontend_image
   backend_image  = var.backend_image
   ollama_image   = var.ollama_image
+  task_cpu       = var.task_cpu
+  task_memory    = var.task_memory
+  desired_count  = var.desired_count
+}
+
+module "iam" {
+  source                  = "./modules/iam"
+  project                 = var.project
+  environment             = var.environment
+  ecs_cluster_arn          = module.compute.cluster_arn
+  ecs_service_arn          = module.compute.service_arn
+  task_execution_role_arn  = module.compute.task_execution_role_arn
 }
