@@ -44,7 +44,7 @@ jobs:
         run: mvn -f backend/pom.xml -DskipTests package
 
       - name: SonarCloud scan
-        uses: SonarSource/sonarcloud-github-action@v2.1.0
+        uses: SonarSource/sonarcloud-github-action@v3.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
