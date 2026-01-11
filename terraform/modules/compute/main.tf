@@ -33,6 +33,44 @@ resource "aws_iam_role_policy_attachment" "task_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+resource "aws_iam_role" "task" {
+  name = "${local.name_prefix}-ecs-task"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "task_exec_ssm" {
+  name = "${local.name_prefix}-ecs-exec-ssm"
+  role = aws_iam_role.task.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_security_group" "alb" {
   name        = "${local.name_prefix}-alb-sg"
   description = "ALB ingress for helpclub frontend"
@@ -112,6 +150,7 @@ resource "aws_ecs_task_definition" "this" {
   cpu                      = var.task_cpu
   memory                   = var.task_memory
   execution_role_arn       = aws_iam_role.task_execution.arn
+  task_role_arn            = aws_iam_role.task.arn
 
   container_definitions = jsonencode([
     {
@@ -194,6 +233,7 @@ resource "aws_ecs_service" "this" {
   task_definition = aws_ecs_task_definition.this.arn
   desired_count   = var.desired_count
   launch_type     = "FARGATE"
+  enable_execute_command = true
 
   network_configuration {
     subnets          = var.subnet_ids
