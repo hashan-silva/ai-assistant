@@ -157,6 +157,10 @@ resource "aws_ecs_task_definition" "this" {
       name      = "helpclub-ollama"
       image     = var.ollama_image
       essential = true
+      entryPoint = ["/bin/sh", "-c"]
+      command = [
+        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull llama3.1; wait"
+      ]
       portMappings = [
         {
           containerPort = 11434
