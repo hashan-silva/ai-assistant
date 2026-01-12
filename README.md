@@ -4,6 +4,7 @@ Helpclub is evolving into a hiring platform that connects job seekers with job p
 
 [![Terraform Lint & Security](https://github.com/hashan-silva/helpclub/actions/workflows/terraform-ci.yml/badge.svg)](https://github.com/hashan-silva/helpclub/actions/workflows/terraform-ci.yml)
 [![SonarCloud Scan](https://github.com/hashan-silva/helpclub/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/hashan-silva/helpclub/actions/workflows/sonarcloud.yml)
+[![Deploy to AWS](https://github.com/hashan-silva/helpclub/actions/workflows/terraform-deployment.yml/badge.svg)](https://github.com/hashan-silva/helpclub/actions/workflows/terraform-deployment.yml)
 
 ## Stack
 
