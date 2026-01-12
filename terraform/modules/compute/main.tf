@@ -159,7 +159,7 @@ resource "aws_ecs_task_definition" "this" {
       essential = true
       entryPoint = ["/bin/sh", "-c"]
       command = [
-        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull llama3.1; wait"
+        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull llama3.1:3b; wait"
       ]
       portMappings = [
         {
@@ -190,6 +190,10 @@ resource "aws_ecs_task_definition" "this" {
         {
           name  = "OLLAMA_BASE_URL"
           value = "http://127.0.0.1:11434"
+        },
+        {
+          name  = "OLLAMA_MODEL"
+          value = "llama3.1:3b"
         }
       ]
       logConfiguration = {
