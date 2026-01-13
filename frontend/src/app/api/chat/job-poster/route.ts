@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const response = await fetch(`${apiBaseUrl}/api/chat/job-seeker`, {
+    const response = await fetch(`${apiBaseUrl}/api/chat/job-poster`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(payload)
