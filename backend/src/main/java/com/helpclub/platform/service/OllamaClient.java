@@ -20,8 +20,8 @@ public class OllamaClient {
         this.instructionLoader = instructionLoader;
     }
 
-    public String generateChatReply(String message) {
-        String prompt = instructionLoader.buildPrompt(message);
+    public String generateChatReply(String message, InstructionAudience audience) {
+        String prompt = instructionLoader.buildPrompt(message, audience);
         return generate(prompt);
     }
 

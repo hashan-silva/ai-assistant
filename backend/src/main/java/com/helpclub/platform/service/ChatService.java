@@ -12,8 +12,8 @@ public class ChatService {
         this.ollamaClient = ollamaClient;
     }
 
-    public ChatResult handleMessage(String message) {
-        String reply = ollamaClient.generateChatReply(message);
+    public ChatResult handleMessage(String message, InstructionAudience audience) {
+        String reply = ollamaClient.generateChatReply(message, audience);
         return new ChatResult(reply, List.of(), List.of());
     }
 
