@@ -76,6 +76,11 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Pull published images
+        run: |
+          docker pull ${{ env.BACKEND_IMAGE }}:latest
+          docker pull ${{ env.FRONTEND_IMAGE }}:latest
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
