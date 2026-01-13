@@ -17,6 +17,7 @@ import {
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import SendIcon from '@mui/icons-material/Send';
 import {useTranslations} from 'next-intl';
+import {useSearchParams} from 'next/navigation';
 
 type Message = {
   id: string;
@@ -162,6 +163,15 @@ const buildThreads = (t: (key: string) => string): Record<string, Message[]> => 
 
 export default function ChatPage() {
   const t = useTranslations('chat');
+  const searchParams = useSearchParams();
+  const roleParam = searchParams.get('role');
+  const audience = roleParam === 'job-poster' ? 'job-poster' : 'job-seeker';
+  const chatEndpoint = audience === 'job-poster'
+    ? '/api/chat/job-poster'
+    : '/api/chat/job-seeker';
+  const audienceLabel = audience === 'job-poster'
+    ? t('audience.jobPoster')
+    : t('audience.jobSeeker');
   const baseThreads = useMemo(() => buildThreads(t), [t]);
   const activeRoomId = 'care';
   const activeRoom = {
@@ -206,7 +216,7 @@ export default function ChatPage() {
 
     setIsSending(true);
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch(chatEndpoint, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({message: trimmed})
@@ -265,6 +275,7 @@ export default function ChatPage() {
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
                 <Chip label={t('status.live')} size="small" color="primary" />
+                <Chip label={audienceLabel} size="small" variant="outlined" />
                 <IconButton aria-label={t('actions.more')}>
                   <MoreHorizIcon />
                 </IconButton>

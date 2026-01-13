@@ -1,0 +1,46 @@
+{
+  "jobPost": {
+    "title": "string",
+    "location": "string",
+    "type": "string",
+    "skills": ["string"],
+    "description": "string",
+    "status": "string"
+  },
+  "jobSeekerProfile": {
+    "name": "string",
+    "email": "string",
+    "skills": ["string"],
+    "experienceYears": "number",
+    "headline": "string",
+    "location": "string"
+  },
+  "jobPosterProfile": {
+    "company": "string",
+    "contactName": "string",
+    "contactEmail": "string",
+    "location": "string"
+  },
+  "jobPostInterest": {
+    "jobPostId": "string",
+    "jobSeekerId": "string",
+    "status": "string",
+    "createdAt": "string"
+  },
+  "jobPostAllocation": {
+    "jobPostId": "string",
+    "jobSeekerId": "string",
+    "jobPosterId": "string",
+    "status": "string",
+    "allocatedAt": "string"
+  },
+  "jobRating": {
+    "jobPostId": "string",
+    "jobSeekerId": "string",
+    "jobPosterId": "string",
+    "ratingTarget": "JOB_POST | JOB_POSTER",
+    "rating": "number",
+    "comments": "string",
+    "createdAt": "string"
+  }
+}

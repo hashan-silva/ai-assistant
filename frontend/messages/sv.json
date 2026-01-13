@@ -52,6 +52,25 @@
       }
     }
   },
+  "landing": {
+    "eyebrow": "Börja här",
+    "title": "Välj din väg",
+    "subtitle": "Oavsett om du söker nästa roll eller ska anställa hjälper AI-assistenten dig genom samtalet.",
+    "roles": {
+      "seeker": {
+        "tag": "Jobbsökande",
+        "title": "Jag söker arbete",
+        "body": "Bygg en tydlig profil, lyft dina styrkor och matchas mot rätt möjligheter.",
+        "cta": "Starta som jobbsökande"
+      },
+      "poster": {
+        "tag": "Jobbannonsering",
+        "title": "Jag rekryterar",
+        "body": "Definiera rollen, sätt krav och publicera en jobbannons snabbare med strukturerade frågor.",
+        "cta": "Starta som arbetsgivare"
+      }
+    }
+  },
   "programs": {
     "title": "Programöversikt",
     "subtitle": "Moduler för etablering, välmående och community-bygge.",
@@ -103,6 +122,10 @@
     "brand": "Helpclub AI",
     "title": "Samordningschatt",
     "subtitle": "Live-rum för triage, onboarding och partnerskap.",
+    "audience": {
+      "jobSeeker": "Jobbsökande flöde",
+      "jobPoster": "Arbetsgivare flöde"
+    },
     "sidebarTitle": "Aktiva rum",
     "membersLabel": "medlemmar",
     "status": {

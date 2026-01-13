@@ -52,6 +52,25 @@
       }
     }
   },
+  "landing": {
+    "eyebrow": "Start here",
+    "title": "Choose your path",
+    "subtitle": "Whether you're finding your next role or defining a new hire, the AI assistant will guide the conversation.",
+    "roles": {
+      "seeker": {
+        "tag": "Job Seeking",
+        "title": "I'm looking for work",
+        "body": "Build a clear profile, highlight your strengths, and get matched to the right opportunities.",
+        "cta": "Start as job seeker"
+      },
+      "poster": {
+        "tag": "Job Posting",
+        "title": "I'm hiring talent",
+        "body": "Define the role, align on requirements, and publish a job post faster with structured prompts.",
+        "cta": "Start as job poster"
+      }
+    }
+  },
   "programs": {
     "title": "Program overview",
     "subtitle": "Modules for onboarding, wellbeing, and community building.",
@@ -103,6 +122,10 @@
     "brand": "Helpclub AI",
     "title": "Care coordination chat",
     "subtitle": "Live rooms for triage, onboarding, and partner alignment.",
+    "audience": {
+      "jobSeeker": "Job seeker flow",
+      "jobPoster": "Job poster flow"
+    },
     "sidebarTitle": "Active rooms",
     "membersLabel": "members",
     "status": {
