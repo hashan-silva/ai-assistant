@@ -10,20 +10,18 @@ public class OllamaClient {
 
     private final WebClient webClient;
     private final String model;
+    private final AiInstructionLoader instructionLoader;
 
     public OllamaClient(@Value("${ollama.base-url}") String baseUrl,
-                        @Value("${ollama.model}") String model) {
+                        @Value("${ollama.model}") String model,
+                        AiInstructionLoader instructionLoader) {
         this.webClient = WebClient.builder().baseUrl(baseUrl).build();
         this.model = model;
+        this.instructionLoader = instructionLoader;
     }
 
     public String generateChatReply(String message) {
-        String prompt = """
-            You are Helpclub's AI recruiting assistant.
-            Reply to the user's message with helpful, concise guidance.
-            User message:
-            %s
-            """.formatted(message);
+        String prompt = instructionLoader.buildPrompt(message);
         return generate(prompt);
     }
 

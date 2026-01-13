@@ -1,0 +1,20 @@
+{
+  "jobPost": {
+    "title": "string",
+    "location": "string",
+    "type": "string",
+    "skills": ["string"],
+    "description": "string"
+  },
+  "jobSeekerProfile": {
+    "name": "string",
+    "email": "string",
+    "skills": ["string"],
+    "experienceYears": "number"
+  },
+  "jobPosterProfile": {
+    "company": "string",
+    "contactName": "string",
+    "contactEmail": "string"
+  }
+}

@@ -8,6 +8,10 @@ ollama:
   base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
   model: ${OLLAMA_MODEL:llama3.1}
 
+ai:
+  instructions:
+    version: ${AI_INSTRUCTIONS_VERSION:v1}
+
 management:
   endpoints:
     web:
