@@ -37,7 +37,8 @@
 - Frontend tests (when added) should live beside components or under `src/__tests__`, using Playwright or React Testing Library; name files `<component>.test.tsx`.
 
 ## Commit & Pull Request Guidelines
-- Use Conventional Commits, e.g., `feat: add proposal workflow`, `fix: handle oracle timeout`, `chore: bump dependencies`.
+- Commit message format: `<area>: <commit message description>` (e.g., `ci: add frontend lint workflow`, `docs: clarify branch naming`).
+- Branch naming: use `<area>/<short-slug>` without issue numbers. Use `ci/` for CI/CD work (e.g., `ci/add-frontend-lint-workflow`) and `docs/` for documentation-only updates.
 - Each PR should describe scope, link issues (e.g., `Fixes #123`), include screenshots/GIFs for UI tweaks, and mention any Terraform state impacts. Keep PRs focused per layer (API vs. frontend vs. infra) when possible.
 
 ## Security & Configuration Tips
