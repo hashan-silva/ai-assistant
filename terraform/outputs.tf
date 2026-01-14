@@ -18,6 +18,14 @@ output "ecs_service_name" {
   value = module.compute.service_name
 }
 
+output "dynamodb_table_names" {
+  value = module.database.table_names
+}
+
+output "dynamodb_table_arns" {
+  value = module.database.table_arns
+}
+
 output "deploy_user_name" {
   value = module.iam.user_name
 }

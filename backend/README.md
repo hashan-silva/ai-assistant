@@ -27,3 +27,13 @@ Set `AI_INSTRUCTIONS_VERSION` to select the instruction version (defaults to `v1
 Chat endpoints select the audience:
 - `POST /api/chat/job-seeker`
 - `POST /api/chat/job-poster`
+
+## DynamoDB
+
+Backend persistence uses DynamoDB tables configured via environment variables:
+- `DDB_JOB_SEEKER_PROFILES_TABLE`
+- `DDB_JOB_POSTER_PROFILES_TABLE`
+- `DDB_JOB_POSTS_TABLE`
+- `DDB_JOB_POST_INTERESTS_TABLE`
+- `DDB_JOB_POST_ALLOCATIONS_TABLE`
+- `DDB_JOB_RATINGS_TABLE`

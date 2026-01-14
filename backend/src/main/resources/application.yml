@@ -12,6 +12,16 @@ ai:
   instructions:
     version: ${AI_INSTRUCTIONS_VERSION:v1}
 
+dynamodb:
+  region: ${AWS_REGION:${AWS_DEFAULT_REGION:eu-north-1}}
+  tables:
+    job-seeker-profiles: ${DDB_JOB_SEEKER_PROFILES_TABLE:helpclub-job-seeker-profiles}
+    job-poster-profiles: ${DDB_JOB_POSTER_PROFILES_TABLE:helpclub-job-poster-profiles}
+    job-posts: ${DDB_JOB_POSTS_TABLE:helpclub-job-posts}
+    job-post-interests: ${DDB_JOB_POST_INTERESTS_TABLE:helpclub-job-post-interests}
+    job-post-allocations: ${DDB_JOB_POST_ALLOCATIONS_TABLE:helpclub-job-post-allocations}
+    job-ratings: ${DDB_JOB_RATINGS_TABLE:helpclub-job-ratings}
+
 management:
   endpoints:
     web:

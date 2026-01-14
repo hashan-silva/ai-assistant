@@ -6,6 +6,10 @@ variable "environment" {
   type = string
 }
 
+variable "aws_region" {
+  type = string
+}
+
 variable "vpc_id" {
   type = string
 }
@@ -45,4 +49,14 @@ variable "desired_count" {
 variable "container_port" {
   type    = number
   default = 3000
+}
+
+variable "dynamodb_table_arns" {
+  type    = list(string)
+  default = []
+}
+
+variable "dynamodb_table_names" {
+  type    = map(string)
+  default = {}
 }
