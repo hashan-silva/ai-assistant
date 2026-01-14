@@ -8,6 +8,7 @@
     "status": "string"
   },
   "jobSeekerProfile": {
+    "jobSeekerId": "string (personal number yyyymmdd-xxxx)",
     "name": "string",
     "email": "string",
     "skills": ["string"],
@@ -16,6 +17,7 @@
     "location": "string"
   },
   "jobPosterProfile": {
+    "jobPosterId": "string (personal number yyyymmdd-xxxx)",
     "company": "string",
     "contactName": "string",
     "contactEmail": "string",
@@ -23,21 +25,21 @@
   },
   "jobPostInterest": {
     "jobPostId": "string",
-    "jobSeekerId": "string",
+    "jobSeekerId": "string (personal number yyyymmdd-xxxx)",
     "status": "string",
     "createdAt": "string"
   },
   "jobPostAllocation": {
     "jobPostId": "string",
-    "jobSeekerId": "string",
-    "jobPosterId": "string",
+    "jobSeekerId": "string (personal number yyyymmdd-xxxx)",
+    "jobPosterId": "string (personal number yyyymmdd-xxxx)",
     "status": "string",
     "allocatedAt": "string"
   },
   "jobRating": {
     "jobPostId": "string",
-    "jobSeekerId": "string",
-    "jobPosterId": "string",
+    "jobSeekerId": "string (personal number yyyymmdd-xxxx)",
+    "jobPosterId": "string (personal number yyyymmdd-xxxx)",
     "ratingTarget": "JOB_POST | JOB_POSTER",
     "rating": "number",
     "comments": "string",
