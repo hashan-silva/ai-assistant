@@ -36,4 +36,5 @@ module "iam" {
   ecs_cluster_name        = module.compute.cluster_name
   ecs_service_name        = module.compute.service_name
   task_execution_role_arn = module.compute.task_execution_role_arn
+  dynamodb_table_arns     = module.database.table_arns
 }

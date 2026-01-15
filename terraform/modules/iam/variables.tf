@@ -17,3 +17,8 @@ variable "ecs_service_name" {
 variable "task_execution_role_arn" {
   type = string
 }
+
+variable "dynamodb_table_arns" {
+  type    = list(string)
+  default = []
+}
