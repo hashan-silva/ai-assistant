@@ -11,9 +11,7 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import {InitiateAuthCommand} from '@aws-sdk/client-cognito-identity-provider';
 import {useTranslations} from 'next-intl';
-import {getCognitoConfig} from '@/lib/cognito';
 
 export default function LoginPage() {
   const t = useTranslations('auth');
@@ -31,28 +29,23 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const {client, clientId} = getCognitoConfig();
-      const result = await client.send(new InitiateAuthCommand({
-        AuthFlow: 'USER_PASSWORD_AUTH',
-        ClientId: clientId,
-        AuthParameters: {
-          USERNAME: personalNumber.trim(),
-          PASSWORD: password
-        }
-      }));
-
-      if (!result.AuthenticationResult?.AccessToken) {
-        throw new Error(t('errors.noTokens'));
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          personalNumber: personalNumber.trim(),
+          password
+        })
+      });
+      let payload: {error?: string} | null = null;
+      try {
+        payload = await response.json();
+      } catch {
+        payload = null;
       }
-
-      sessionStorage.setItem('helpclub.accessToken', result.AuthenticationResult.AccessToken);
-      if (result.AuthenticationResult.IdToken) {
-        sessionStorage.setItem('helpclub.idToken', result.AuthenticationResult.IdToken);
+      if (!response.ok) {
+        throw new Error(payload?.error || t('errors.loginFailed'));
       }
-      if (result.AuthenticationResult.RefreshToken) {
-        sessionStorage.setItem('helpclub.refreshToken', result.AuthenticationResult.RefreshToken);
-      }
-
       setStatus('success');
       router.push('/chat');
     } catch (err) {

@@ -279,11 +279,11 @@ resource "aws_ecs_task_definition" "this" {
           value = "http://127.0.0.1:8080"
         },
         {
-          name  = "NEXT_PUBLIC_COGNITO_REGION"
+          name  = "COGNITO_REGION"
           value = var.aws_region
         },
         {
-          name  = "NEXT_PUBLIC_COGNITO_USER_POOL_CLIENT_ID"
+          name  = "COGNITO_USER_POOL_CLIENT_ID"
           value = var.cognito_user_pool_client_id
         }
       ]
