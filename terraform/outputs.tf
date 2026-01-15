@@ -26,6 +26,14 @@ output "dynamodb_table_arns" {
   value = module.database.table_arns
 }
 
+output "cognito_user_pool_id" {
+  value = module.auth.user_pool_id
+}
+
+output "cognito_user_pool_client_id" {
+  value = module.auth.user_pool_client_id
+}
+
 output "deploy_user_name" {
   value = module.iam.user_name
 }

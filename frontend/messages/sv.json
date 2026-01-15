@@ -213,6 +213,38 @@
       "emptyReply": "Helpclub AI-assistenten gav inget svar."
     }
   },
+  "auth": {
+    "loginTitle": "Välkommen tillbaka",
+    "loginSubtitle": "Logga in med ditt personnummer.",
+    "registerTitle": "Skapa konto",
+    "registerSubtitle": "Gå med i Helpclub med dina uppgifter.",
+    "personalNumber": "Personnummer",
+    "email": "E-postadress",
+    "phone": "Telefonnummer",
+    "phoneHint": "Använd E.164-format, t.ex. +46701234567",
+    "firstName": "Förnamn",
+    "lastName": "Efternamn",
+    "city": "Stad",
+    "profileType": "Profiltyp",
+    "profileOptions": {
+      "job_seeker": "Jobbsökare",
+      "job_poster": "Arbetsgivare",
+      "both": "Jobbsökare och arbetsgivare"
+    },
+    "password": "Lösenord",
+    "loginCta": "Logga in",
+    "registerCta": "Skapa konto",
+    "loading": "Arbetar...",
+    "noAccount": "Inget konto än?",
+    "haveAccount": "Har du redan ett konto?",
+    "registerLink": "Registrera",
+    "loginLink": "Logga in",
+    "errors": {
+      "loginFailed": "Det gick inte att logga in just nu.",
+      "registerFailed": "Det gick inte att skapa konto.",
+      "noTokens": "Ingen session returnerades från Cognito."
+    }
+  },
   "support": {
     "title": "Stödcenter",
     "subtitle": "Resurser och kontaktvägar för trygg leverans.",

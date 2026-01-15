@@ -213,6 +213,38 @@
       "emptyReply": "The Helpclub AI assistant did not return a reply."
     }
   },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "loginSubtitle": "Sign in with your personal number.",
+    "registerTitle": "Create your account",
+    "registerSubtitle": "Join Helpclub with your personal details.",
+    "personalNumber": "Personal number",
+    "email": "Email address",
+    "phone": "Phone number",
+    "phoneHint": "Use E.164 format, e.g. +46701234567",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "city": "City",
+    "profileType": "Profile type",
+    "profileOptions": {
+      "job_seeker": "Job seeker",
+      "job_poster": "Job poster",
+      "both": "Job seeker and job poster"
+    },
+    "password": "Password",
+    "loginCta": "Sign in",
+    "registerCta": "Create account",
+    "loading": "Working...",
+    "noAccount": "No account yet?",
+    "haveAccount": "Already have an account?",
+    "registerLink": "Register",
+    "loginLink": "Sign in",
+    "errors": {
+      "loginFailed": "Unable to sign in right now.",
+      "registerFailed": "Unable to create your account.",
+      "noTokens": "No session returned from Cognito."
+    }
+  },
   "support": {
     "title": "Support center",
     "subtitle": "Resources and contact paths for safe delivery.",

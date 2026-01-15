@@ -60,3 +60,7 @@ variable "dynamodb_table_names" {
   type    = map(string)
   default = {}
 }
+
+variable "cognito_user_pool_client_id" {
+  type = string
+}

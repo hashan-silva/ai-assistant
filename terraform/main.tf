@@ -12,6 +12,12 @@ module "database" {
   environment = var.environment
 }
 
+module "auth" {
+  source      = "./modules/auth"
+  project     = var.project
+  environment = var.environment
+}
+
 module "compute" {
   source         = "./modules/compute"
   project        = var.project
@@ -27,6 +33,7 @@ module "compute" {
   desired_count  = var.desired_count
   dynamodb_table_arns = module.database.table_arns
   dynamodb_table_names = module.database.table_name_map
+  cognito_user_pool_client_id = module.auth.user_pool_client_id
 }
 
 module "iam" {
