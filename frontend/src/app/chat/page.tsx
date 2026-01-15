@@ -25,6 +25,7 @@ type Message = {
   content: string;
   time: string;
   self?: boolean;
+  isTyping?: boolean;
 };
 
 const escapeHtml = (value: string) =>
@@ -95,72 +96,6 @@ const renderMarkdown = (value: string) => {
   return htmlParts.join('');
 };
 
-const buildThreads = (t: (key: string) => string): Record<string, Message[]> => ({
-  care: [
-    {
-      id: 'care-1',
-      author: t('people.lisa'),
-      content: t('messages.care.one'),
-      time: '09:05'
-    },
-    {
-      id: 'care-2',
-      author: t('people.you'),
-      content: t('messages.care.two'),
-      time: '09:06',
-      self: true
-    },
-    {
-      id: 'care-3',
-      author: t('people.otto'),
-      content: t('messages.care.three'),
-      time: '09:08'
-    }
-  ],
-  onboarding: [
-    {
-      id: 'onboarding-1',
-      author: t('people.mila'),
-      content: t('messages.onboarding.one'),
-      time: '10:12'
-    },
-    {
-      id: 'onboarding-2',
-      author: t('people.you'),
-      content: t('messages.onboarding.two'),
-      time: '10:14',
-      self: true
-    },
-    {
-      id: 'onboarding-3',
-      author: t('people.jonas'),
-      content: t('messages.onboarding.three'),
-      time: '10:15'
-    }
-  ],
-  partners: [
-    {
-      id: 'partners-1',
-      author: t('people.elin'),
-      content: t('messages.partners.one'),
-      time: '13:42'
-    },
-    {
-      id: 'partners-2',
-      author: t('people.you'),
-      content: t('messages.partners.two'),
-      time: '13:44',
-      self: true
-    },
-    {
-      id: 'partners-3',
-      author: t('people.samir'),
-      content: t('messages.partners.three'),
-      time: '13:47'
-    }
-  ]
-});
-
 export default function ChatPage() {
   const t = useTranslations('chat');
   const searchParams = useSearchParams();
@@ -172,31 +107,93 @@ export default function ChatPage() {
   const audienceLabel = audience === 'job-poster'
     ? t('audience.jobPoster')
     : t('audience.jobSeeker');
-  const baseThreads = useMemo(() => buildThreads(t), [t]);
-  const activeRoomId = 'care';
   const activeRoom = {
     name: t('rooms.care.name'),
     topic: t('rooms.care.topic')
   };
-  const [threads, setThreads] = useState(baseThreads);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [composer, setComposer] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [isAssistantTyping, setIsAssistantTyping] = useState(false);
+
+  const activeMessages = useMemo(() => {
+    if (!isAssistantTyping) {
+      return messages;
+    }
+    return [
+      ...messages,
+      {
+        id: 'assistant-typing',
+        author: t('people.assistant'),
+        content: '',
+        time: t('status.typing'),
+        isTyping: true
+      }
+    ];
+  }, [isAssistantTyping, messages, t]);
 
   useEffect(() => {
-    setThreads(baseThreads);
-  }, [baseThreads]);
+    let cancelled = false;
+    const introPrompt =
+      'Introduce yourself as the Helpclub AI agent and explain how you can help in this chat.';
 
-  const activeMessages = threads[activeRoomId] ?? [];
+    const wait = (ms: number) =>
+      new Promise((resolve) => {
+        setTimeout(resolve, ms);
+      });
 
-  const quickReplies = [
-    t('quickReplies.checkin'),
-    t('quickReplies.summary'),
-    t('quickReplies.schedule')
-  ];
+    const fetchIntro = async () => {
+      setIsAssistantTyping(true);
+      while (!cancelled) {
+        try {
+          const response = await fetch(chatEndpoint, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({message: introPrompt})
+          });
+          let payload: {reply?: string; error?: string} | null = null;
+          try {
+            payload = await response.json();
+          } catch {
+            payload = null;
+          }
+          if (!response.ok) {
+            throw new Error(payload?.error || t('errors.requestFailed'));
+          }
+          const replyText = payload?.reply && payload.reply.trim()
+            ? payload.reply.trim()
+            : t('errors.emptyReply');
+          if (!cancelled) {
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: `assistant-${Date.now()}`,
+                author: t('people.assistant'),
+                content: replyText,
+                time: t('time.now')
+              }
+            ]);
+          }
+          break;
+        } catch {
+          await wait(2000);
+        }
+      }
+      if (!cancelled) {
+        setIsAssistantTyping(false);
+      }
+    };
+
+    void fetchIntro();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [chatEndpoint, t]);
 
   const handleSend = async (message: string) => {
     const trimmed = message.trim();
-    if (!trimmed || isSending) {
+    if (!trimmed || isSending || isAssistantTyping) {
       return;
     }
 
@@ -208,13 +205,11 @@ export default function ChatPage() {
       self: true
     };
 
-    setThreads((prev) => ({
-      ...prev,
-      [activeRoomId]: [...(prev[activeRoomId] ?? []), userMessage]
-    }));
+    setMessages((prev) => [...prev, userMessage]);
     setComposer('');
 
     setIsSending(true);
+    setIsAssistantTyping(true);
     try {
       const response = await fetch(chatEndpoint, {
         method: 'POST',
@@ -239,10 +234,7 @@ export default function ChatPage() {
         content: replyText,
         time: t('time.now')
       };
-      setThreads((prev) => ({
-        ...prev,
-        [activeRoomId]: [...(prev[activeRoomId] ?? []), reply]
-      }));
+      setMessages((prev) => [...prev, reply]);
     } catch (error) {
       const reply: Message = {
         id: `assistant-${Date.now()}`,
@@ -252,12 +244,10 @@ export default function ChatPage() {
           : t('errors.requestFailed'),
         time: t('time.now')
       };
-      setThreads((prev) => ({
-        ...prev,
-        [activeRoomId]: [...(prev[activeRoomId] ?? []), reply]
-      }));
+      setMessages((prev) => [...prev, reply]);
     } finally {
       setIsSending(false);
+      setIsAssistantTyping(false);
     }
   };
 
@@ -297,15 +287,26 @@ export default function ChatPage() {
 
         <Box className="chat-thread">
           {activeMessages.map((message) => (
-            <Box key={message.id} className={`chat-message ${message.self ? 'self' : ''}`}>
+            <Box
+              key={message.id}
+              className={`chat-message ${message.self ? 'self' : ''} ${message.isTyping ? 'typing' : ''}`}
+            >
               <Stack spacing={0.5}>
                 <Typography variant="subtitle2">{message.author}</Typography>
-                <Typography
-                  variant="body2"
-                  component="div"
-                  className="chat-message-content"
-                  dangerouslySetInnerHTML={{__html: renderMarkdown(message.content)}}
-                />
+                {message.isTyping ? (
+                  <Box className="typing-indicator" aria-label={message.time}>
+                    <span />
+                    <span />
+                    <span />
+                  </Box>
+                ) : (
+                  <Typography
+                    variant="body2"
+                    component="div"
+                    className="chat-message-content"
+                    dangerouslySetInnerHTML={{__html: renderMarkdown(message.content)}}
+                  />
+                )}
                 <Typography variant="caption" className="chat-message-meta">
                   {message.time}
                 </Typography>
@@ -318,20 +319,6 @@ export default function ChatPage() {
 
         <Box className="chat-composer">
           <Stack spacing={2}>
-            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-              <Typography variant="subtitle2" color="text.secondary">
-                {t('quickRepliesTitle')}
-              </Typography>
-              {quickReplies.map((reply) => (
-                <Chip
-                  key={reply}
-                  label={reply}
-                  size="small"
-                  variant="outlined"
-                  onClick={() => void handleSend(reply)}
-                />
-              ))}
-            </Stack>
             <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
               <TextField
                 fullWidth
@@ -340,7 +327,7 @@ export default function ChatPage() {
                 value={composer}
                 placeholder={t('composerPlaceholder')}
                 onChange={(event) => setComposer(event.target.value)}
-                disabled={isSending}
+                disabled={isSending || isAssistantTyping}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter' && !event.shiftKey) {
                     event.preventDefault();
@@ -352,7 +339,7 @@ export default function ChatPage() {
                 variant="contained"
                 endIcon={<SendIcon />}
                 onClick={() => void handleSend(composer)}
-                disabled={isSending || composer.trim().length === 0}
+                disabled={isSending || isAssistantTyping || composer.trim().length === 0}
                 sx={{alignSelf: {xs: 'stretch', sm: 'flex-end'}}}
               >
                 {t('sendLabel')}
