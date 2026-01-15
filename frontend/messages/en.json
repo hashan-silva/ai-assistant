@@ -129,7 +129,8 @@
     "sidebarTitle": "Active rooms",
     "membersLabel": "members",
     "status": {
-      "live": "Live"
+      "live": "Live",
+      "typing": "Typing..."
     },
     "actions": {
       "more": "More options"

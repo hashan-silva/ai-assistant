@@ -129,7 +129,8 @@
     "sidebarTitle": "Aktiva rum",
     "membersLabel": "medlemmar",
     "status": {
-      "live": "Live"
+      "live": "Live",
+      "typing": "Skriver..."
     },
     "actions": {
       "more": "Fler alternativ"
