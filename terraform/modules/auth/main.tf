@@ -84,7 +84,7 @@ resource "aws_cognito_user_pool" "this" {
     name                = "profile_type"
     attribute_data_type = "String"
     mutable             = true
-    required            = true
+    required            = false
 
     string_attribute_constraints {
       min_length = 1
