@@ -241,8 +241,7 @@
     "loginLink": "Logga in",
     "errors": {
       "loginFailed": "Det gick inte att logga in just nu.",
-      "registerFailed": "Det gick inte att skapa konto.",
-      "noTokens": "Ingen session returnerades från Cognito."
+      "registerFailed": "Det gick inte att skapa konto."
     }
   },
   "support": {

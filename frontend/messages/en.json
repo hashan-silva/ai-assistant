@@ -241,8 +241,7 @@
     "loginLink": "Sign in",
     "errors": {
       "loginFailed": "Unable to sign in right now.",
-      "registerFailed": "Unable to create your account.",
-      "noTokens": "No session returned from Cognito."
+      "registerFailed": "Unable to create your account."
     }
   },
   "support": {

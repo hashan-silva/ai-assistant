@@ -12,9 +12,7 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import {SignUpCommand} from '@aws-sdk/client-cognito-identity-provider';
 import {useTranslations} from 'next-intl';
-import {getCognitoConfig} from '@/lib/cognito';
 
 const profileOptions = ['job_seeker', 'job_poster', 'both'] as const;
 
@@ -45,23 +43,28 @@ export default function RegisterPage() {
     setError(null);
 
     try {
-      const {client, clientId} = getCognitoConfig();
-      const result = await client.send(new SignUpCommand({
-        ClientId: clientId,
-        Username: form.personalNumber.trim(),
-        Password: form.password,
-        UserAttributes: [
-          {Name: 'email', Value: form.email.trim()},
-          {Name: 'phone_number', Value: form.phone.trim()},
-          {Name: 'given_name', Value: form.firstName.trim()},
-          {Name: 'family_name', Value: form.lastName.trim()},
-          {Name: 'address', Value: form.city.trim()},
-          {Name: 'custom:profile_type', Value: form.profileType}
-        ]
-      }));
-
-      if (!result.UserSub) {
-        throw new Error(t('errors.registerFailed'));
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          personalNumber: form.personalNumber.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+          firstName: form.firstName.trim(),
+          lastName: form.lastName.trim(),
+          city: form.city.trim(),
+          profileType: form.profileType,
+          password: form.password
+        })
+      });
+      let payload: {error?: string} | null = null;
+      try {
+        payload = await response.json();
+      } catch {
+        payload = null;
+      }
+      if (!response.ok) {
+        throw new Error(payload?.error || t('errors.registerFailed'));
       }
 
       setStatus('success');
