@@ -277,6 +277,14 @@ resource "aws_ecs_task_definition" "this" {
         {
           name  = "NEXT_PUBLIC_API_BASE_URL"
           value = "http://127.0.0.1:8080"
+        },
+        {
+          name  = "NEXT_PUBLIC_COGNITO_REGION"
+          value = var.aws_region
+        },
+        {
+          name  = "NEXT_PUBLIC_COGNITO_USER_POOL_CLIENT_ID"
+          value = var.cognito_user_pool_client_id
         }
       ]
       logConfiguration = {
