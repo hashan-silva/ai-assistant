@@ -160,9 +160,7 @@ export default function ChatPage() {
           if (!response.ok) {
             throw new Error(payload?.error || t('errors.requestFailed'));
           }
-          const replyText = payload?.reply && payload.reply.trim()
-            ? payload.reply.trim()
-            : t('errors.emptyReply');
+          const replyText = payload?.reply?.trim() || t('errors.emptyReply');
           if (!cancelled) {
             setMessages((prev) => [
               ...prev,
@@ -225,9 +223,7 @@ export default function ChatPage() {
       if (!response.ok) {
         throw new Error(payload?.error || t('errors.requestFailed'));
       }
-      const replyText = payload?.reply && payload.reply.trim()
-        ? payload.reply.trim()
-        : t('errors.emptyReply');
+      const replyText = payload?.reply?.trim() || t('errors.emptyReply');
       const reply: Message = {
         id: `assistant-${Date.now()}`,
         author: t('people.assistant'),
