@@ -8,9 +8,9 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserCommand;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserResponse;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.UpdateUserAttributesRequest;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserRequest;
 
 @Service
 public class CognitoProfileService {
@@ -22,7 +22,7 @@ public class CognitoProfileService {
     }
 
     public ProfileResponse getProfile(String accessToken) {
-        GetUserResponse user = cognitoClient.send(GetUserCommand.builder()
+        GetUserResponse user = cognitoClient.getUser(GetUserRequest.builder()
             .accessToken(accessToken)
             .build());
 
