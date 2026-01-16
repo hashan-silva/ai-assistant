@@ -52,26 +52,6 @@ const theme = createTheme({
       fontSize: '0.95rem',
       lineHeight: 1.6
     }
-  },
-  components: {
-    MuiInputLabel: {
-      styleOverrides: {
-        root: {
-          lineHeight: 1.2,
-          transform: 'translate(14px, 14px) scale(1)'
-        },
-        shrink: {
-          transform: 'translate(14px, -7px) scale(0.75)'
-        }
-      }
-    },
-    MuiOutlinedInput: {
-      styleOverrides: {
-        input: {
-          padding: '14px'
-        }
-      }
-    }
   }
 });
 
