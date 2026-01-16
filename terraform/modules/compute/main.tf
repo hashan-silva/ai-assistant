@@ -285,6 +285,10 @@ resource "aws_ecs_task_definition" "this" {
         {
           name  = "COGNITO_USER_POOL_CLIENT_ID"
           value = var.cognito_user_pool_client_id
+        },
+        {
+          name  = "COGNITO_USER_POOL_ID"
+          value = var.cognito_user_pool_id
         }
       ]
       logConfiguration = {
