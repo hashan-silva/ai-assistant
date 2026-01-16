@@ -33,14 +33,14 @@ public class AiPersistenceService {
             return;
         }
         Map<String, AttributeValue> item = writer.newItem();
-        item.put("job_seeker_id", writer.stringValue(profile.jobSeekerId()));
-        putOptional(item, "name", profile.name());
-        putOptional(item, "email", profile.email());
-        putOptional(item, "headline", profile.headline());
-        putOptional(item, "location", profile.location());
-        putOptional(item, "experience_years", profile.experienceYears());
-        putOptional(item, "skills", profile.skills());
-        item.put("updated_at", writer.stringValue(Instant.now().toString()));
+        item.put(DynamoDbAttributeNames.JOB_SEEKER_ID, writer.stringValue(profile.jobSeekerId()));
+        putOptional(item, DynamoDbAttributeNames.NAME, profile.name());
+        putOptional(item, DynamoDbAttributeNames.EMAIL, profile.email());
+        putOptional(item, DynamoDbAttributeNames.HEADLINE, profile.headline());
+        putOptional(item, DynamoDbAttributeNames.LOCATION, profile.location());
+        putOptional(item, DynamoDbAttributeNames.EXPERIENCE_YEARS, profile.experienceYears());
+        putOptional(item, DynamoDbAttributeNames.SKILLS, profile.skills());
+        item.put(DynamoDbAttributeNames.UPDATED_AT, writer.stringValue(Instant.now().toString()));
         writer.putItem(tableNames.getJobSeekerProfiles(), item);
     }
 
@@ -49,12 +49,12 @@ public class AiPersistenceService {
             return;
         }
         Map<String, AttributeValue> item = writer.newItem();
-        item.put("job_poster_id", writer.stringValue(profile.jobPosterId()));
-        putOptional(item, "company", profile.company());
-        putOptional(item, "contact_name", profile.contactName());
-        putOptional(item, "contact_email", profile.contactEmail());
-        putOptional(item, "location", profile.location());
-        item.put("updated_at", writer.stringValue(Instant.now().toString()));
+        item.put(DynamoDbAttributeNames.JOB_POSTER_ID, writer.stringValue(profile.jobPosterId()));
+        putOptional(item, DynamoDbAttributeNames.COMPANY, profile.company());
+        putOptional(item, DynamoDbAttributeNames.CONTACT_NAME, profile.contactName());
+        putOptional(item, DynamoDbAttributeNames.CONTACT_EMAIL, profile.contactEmail());
+        putOptional(item, DynamoDbAttributeNames.LOCATION, profile.location());
+        item.put(DynamoDbAttributeNames.UPDATED_AT, writer.stringValue(Instant.now().toString()));
         writer.putItem(tableNames.getJobPosterProfiles(), item);
     }
 
@@ -63,15 +63,15 @@ public class AiPersistenceService {
             return;
         }
         Map<String, AttributeValue> item = writer.newItem();
-        item.put("job_post_id", writer.stringValue(post.jobPostId()));
-        putOptional(item, "job_poster_id", post.jobPosterId());
-        putOptional(item, "title", post.title());
-        putOptional(item, "description", post.description());
-        putOptional(item, "location", post.location());
-        putOptional(item, "type", post.type());
-        putOptional(item, "status", post.status());
-        putOptional(item, "skills", post.skills());
-        item.put("updated_at", writer.stringValue(Instant.now().toString()));
+        item.put(DynamoDbAttributeNames.JOB_POST_ID, writer.stringValue(post.jobPostId()));
+        putOptional(item, DynamoDbAttributeNames.JOB_POSTER_ID, post.jobPosterId());
+        putOptional(item, DynamoDbAttributeNames.TITLE, post.title());
+        putOptional(item, DynamoDbAttributeNames.DESCRIPTION, post.description());
+        putOptional(item, DynamoDbAttributeNames.LOCATION, post.location());
+        putOptional(item, DynamoDbAttributeNames.TYPE, post.type());
+        putOptional(item, DynamoDbAttributeNames.STATUS, post.status());
+        putOptional(item, DynamoDbAttributeNames.SKILLS, post.skills());
+        item.put(DynamoDbAttributeNames.UPDATED_AT, writer.stringValue(Instant.now().toString()));
         writer.putItem(tableNames.getJobPosts(), item);
     }
 
@@ -80,10 +80,10 @@ public class AiPersistenceService {
             return;
         }
         Map<String, AttributeValue> item = writer.newItem();
-        item.put("job_post_id", writer.stringValue(interest.jobPostId()));
-        item.put("job_seeker_id", writer.stringValue(interest.jobSeekerId()));
-        putOptional(item, "status", interest.status());
-        item.put("created_at", writer.stringValue(defaultTimestamp(interest.createdAt())));
+        item.put(DynamoDbAttributeNames.JOB_POST_ID, writer.stringValue(interest.jobPostId()));
+        item.put(DynamoDbAttributeNames.JOB_SEEKER_ID, writer.stringValue(interest.jobSeekerId()));
+        putOptional(item, DynamoDbAttributeNames.STATUS, interest.status());
+        item.put(DynamoDbAttributeNames.CREATED_AT, writer.stringValue(defaultTimestamp(interest.createdAt())));
         writer.putItem(tableNames.getJobPostInterests(), item);
     }
 
@@ -92,11 +92,11 @@ public class AiPersistenceService {
             return;
         }
         Map<String, AttributeValue> item = writer.newItem();
-        item.put("job_post_id", writer.stringValue(allocation.jobPostId()));
-        item.put("job_seeker_id", writer.stringValue(allocation.jobSeekerId()));
-        putOptional(item, "job_poster_id", allocation.jobPosterId());
-        putOptional(item, "status", allocation.status());
-        item.put("allocated_at", writer.stringValue(defaultTimestamp(allocation.allocatedAt())));
+        item.put(DynamoDbAttributeNames.JOB_POST_ID, writer.stringValue(allocation.jobPostId()));
+        item.put(DynamoDbAttributeNames.JOB_SEEKER_ID, writer.stringValue(allocation.jobSeekerId()));
+        putOptional(item, DynamoDbAttributeNames.JOB_POSTER_ID, allocation.jobPosterId());
+        putOptional(item, DynamoDbAttributeNames.STATUS, allocation.status());
+        item.put(DynamoDbAttributeNames.ALLOCATED_AT, writer.stringValue(defaultTimestamp(allocation.allocatedAt())));
         writer.putItem(tableNames.getJobPostAllocations(), item);
     }
 
@@ -105,17 +105,17 @@ public class AiPersistenceService {
             return;
         }
         Map<String, AttributeValue> item = writer.newItem();
-        item.put("job_post_id", writer.stringValue(rating.jobPostId()));
+        item.put(DynamoDbAttributeNames.JOB_POST_ID, writer.stringValue(rating.jobPostId()));
         String target = rating.ratingTarget() == null ? "JOB_POST" : rating.ratingTarget();
-        item.put("rating_key", writer.stringValue(rating.jobSeekerId() + "#" + target));
-        item.put("job_seeker_id", writer.stringValue(rating.jobSeekerId()));
-        putOptional(item, "job_poster_id", rating.jobPosterId());
-        putOptional(item, "rating_target", target);
+        item.put(DynamoDbAttributeNames.RATING_KEY, writer.stringValue(rating.jobSeekerId() + "#" + target));
+        item.put(DynamoDbAttributeNames.JOB_SEEKER_ID, writer.stringValue(rating.jobSeekerId()));
+        putOptional(item, DynamoDbAttributeNames.JOB_POSTER_ID, rating.jobPosterId());
+        putOptional(item, DynamoDbAttributeNames.RATING_TARGET, target);
         if (rating.rating() != null) {
-            item.put("rating", writer.numberValue(rating.rating()));
+            item.put(DynamoDbAttributeNames.RATING, writer.numberValue(rating.rating()));
         }
-        putOptional(item, "comments", rating.comments());
-        item.put("created_at", writer.stringValue(defaultTimestamp(rating.createdAt())));
+        putOptional(item, DynamoDbAttributeNames.COMMENTS, rating.comments());
+        item.put(DynamoDbAttributeNames.CREATED_AT, writer.stringValue(defaultTimestamp(rating.createdAt())));
         writer.putItem(tableNames.getJobRatings(), item);
     }
 
