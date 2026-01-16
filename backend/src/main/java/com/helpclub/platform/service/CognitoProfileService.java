@@ -10,7 +10,7 @@ import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityPr
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserCommand;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserResponse;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.UpdateUserAttributesCommand;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.UpdateUserAttributesRequest;
 
 @Service
 public class CognitoProfileService {
@@ -45,7 +45,7 @@ public class CognitoProfileService {
             throw new IllegalArgumentException("No profile updates provided");
         }
 
-        cognitoClient.send(UpdateUserAttributesCommand.builder()
+        cognitoClient.updateUserAttributes(UpdateUserAttributesRequest.builder()
             .accessToken(accessToken)
             .userAttributes(updates)
             .build());
