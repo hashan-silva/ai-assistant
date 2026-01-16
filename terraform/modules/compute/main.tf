@@ -135,6 +135,14 @@ resource "aws_vpc_security_group_ingress_rule" "service_from_alb" {
   to_port                      = var.container_port
 }
 
+resource "aws_vpc_security_group_ingress_rule" "service_from_alb_backend" {
+  security_group_id            = aws_security_group.service.id
+  referenced_security_group_id = aws_security_group.alb.id
+  from_port                    = 8080
+  ip_protocol                  = "tcp"
+  to_port                      = 8080
+}
+
 resource "aws_vpc_security_group_egress_rule" "service_all" {
   security_group_id = aws_security_group.service.id
   cidr_ipv4         = "0.0.0.0/0"
@@ -150,14 +158,27 @@ resource "aws_lb" "this" {
 }
 
 resource "aws_lb_target_group" "frontend" {
-  name        = "${local.name_prefix}-tg"
+  name        = "${local.name_prefix}-tg-fe"
   port        = var.container_port
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = var.vpc_id
 
   health_check {
-    path     = "/"
+    path     = "/health"
+    protocol = "HTTP"
+  }
+}
+
+resource "aws_lb_target_group" "backend" {
+  name        = "${local.name_prefix}-tg-be"
+  port        = 8080
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = var.vpc_id
+
+  health_check {
+    path     = "/api/health"
     protocol = "HTTP"
   }
 }
@@ -170,6 +191,22 @@ resource "aws_lb_listener" "http" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.frontend.arn
+  }
+}
+
+resource "aws_lb_listener_rule" "backend_api" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 10
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/api/*"]
+    }
   }
 }
 
@@ -311,6 +348,12 @@ resource "aws_ecs_service" "this" {
     target_group_arn = aws_lb_target_group.frontend.arn
     container_name   = "helpclub-frontend"
     container_port   = var.container_port
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.backend.arn
+    container_name   = "helpclub-backend"
+    container_port   = 8080
   }
 
   depends_on = [aws_lb_listener.http]
