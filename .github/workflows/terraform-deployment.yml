@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: read
+  packages: write
 
 jobs:
   build-and-deploy:
@@ -87,16 +88,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Pull published images
-        run: |
-          docker pull ${{ env.BACKEND_IMAGE }}:latest
-          docker pull ${{ env.FRONTEND_IMAGE }}:latest
-
-      - name: Resolve image digests
-        run: |
-          echo "BACKEND_IMAGE_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' ${{ env.BACKEND_IMAGE }}:latest)" >> $GITHUB_ENV
-          echo "FRONTEND_IMAGE_DIGEST=$(docker inspect --format '{{index .RepoDigests 0}}' ${{ env.FRONTEND_IMAGE }}:latest)" >> $GITHUB_ENV
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -111,8 +102,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
           TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
-          TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE_DIGEST }}
-          TF_VAR_backend_image: ${{ env.BACKEND_IMAGE_DIGEST }}
+          TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE }}:latest
+          TF_VAR_backend_image: ${{ env.BACKEND_IMAGE }}:latest
           TF_VAR_ollama_image: ${{ secrets.AWS_OLLAMA_IMAGE || 'ollama/ollama:latest' }}
         run: terraform init
 
@@ -125,7 +116,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
           TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
-          TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE_DIGEST }}
-          TF_VAR_backend_image: ${{ env.BACKEND_IMAGE_DIGEST }}
+          TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE }}:latest
+          TF_VAR_backend_image: ${{ env.BACKEND_IMAGE }}:latest
           TF_VAR_ollama_image: ${{ secrets.AWS_OLLAMA_IMAGE || 'ollama/ollama:latest' }}
         run: terraform apply -auto-approve
