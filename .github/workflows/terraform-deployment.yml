@@ -67,6 +67,7 @@ jobs:
         run: npm install --package-lock-only --no-audit --no-fund
 
       - name: Build and push backend
+        id: build-backend
         uses: docker/build-push-action@v6
         with:
           context: ./backend
@@ -78,6 +79,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Build and push frontend
+        id: build-frontend
         uses: docker/build-push-action@v6
         with:
           context: ./frontend
@@ -87,6 +89,11 @@ jobs:
           labels: ${{ steps.meta-frontend.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      
+      - name: Set image digests
+        run: |
+          echo "BACKEND_IMAGE_DIGEST=${{ env.BACKEND_IMAGE }}@${{ steps.build-backend.outputs.digest }}" >> $GITHUB_ENV
+          echo "FRONTEND_IMAGE_DIGEST=${{ env.FRONTEND_IMAGE }}@${{ steps.build-frontend.outputs.digest }}" >> $GITHUB_ENV
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -102,8 +109,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
           TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
-          TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE }}:latest
-          TF_VAR_backend_image: ${{ env.BACKEND_IMAGE }}:latest
+          TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE_DIGEST }}
+          TF_VAR_backend_image: ${{ env.BACKEND_IMAGE_DIGEST }}
           TF_VAR_ollama_image: ${{ secrets.AWS_OLLAMA_IMAGE || 'ollama/ollama:latest' }}
         run: terraform init
 
@@ -116,7 +123,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
           TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
-          TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE }}:latest
-          TF_VAR_backend_image: ${{ env.BACKEND_IMAGE }}:latest
+          TF_VAR_frontend_image: ${{ env.FRONTEND_IMAGE_DIGEST }}
+          TF_VAR_backend_image: ${{ env.BACKEND_IMAGE_DIGEST }}
           TF_VAR_ollama_image: ${{ secrets.AWS_OLLAMA_IMAGE || 'ollama/ollama:latest' }}
         run: terraform apply -auto-approve
