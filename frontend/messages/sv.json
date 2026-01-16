@@ -244,6 +244,18 @@
       "registerFailed": "Det gick inte att skapa konto."
     }
   },
+  "myProfile": {
+    "title": "Min profil",
+    "subtitle": "Håll dina kontaktuppgifter och preferenser uppdaterade.",
+    "sectionTitle": "Profiluppgifter",
+    "sectionBody": "Uppgifterna hjälper oss att matcha dig med rätt möjligheter.",
+    "personalNumberHint": "Det här är kopplat till ditt konto och kan inte ändras.",
+    "saveCta": "Spara ändringar",
+    "saving": "Sparar...",
+    "loadError": "Det gick inte att hämta profilen just nu.",
+    "saveError": "Det gick inte att uppdatera profilen just nu.",
+    "saveSuccess": "Profilen är uppdaterad."
+  },
   "support": {
     "title": "Stödcenter",
     "subtitle": "Resurser och kontaktvägar för trygg leverans.",

@@ -22,6 +22,9 @@ dynamodb:
     job-post-allocations: ${DDB_JOB_POST_ALLOCATIONS_TABLE:helpclub-job-post-allocations}
     job-ratings: ${DDB_JOB_RATINGS_TABLE:helpclub-job-ratings}
 
+cognito:
+  region: ${COGNITO_REGION:${AWS_REGION:${AWS_DEFAULT_REGION:eu-north-1}}}
+
 management:
   endpoints:
     web:

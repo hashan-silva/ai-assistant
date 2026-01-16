@@ -244,6 +244,18 @@
       "registerFailed": "Unable to create your account."
     }
   },
+  "myProfile": {
+    "title": "My profile",
+    "subtitle": "Keep your contact details and preferences up to date.",
+    "sectionTitle": "Profile details",
+    "sectionBody": "These details help us personalize recommendations and matching.",
+    "personalNumberHint": "This identifier is tied to your login and cannot be edited.",
+    "saveCta": "Save changes",
+    "saving": "Saving...",
+    "loadError": "Unable to load your profile right now.",
+    "saveError": "Unable to update your profile right now.",
+    "saveSuccess": "Profile updated."
+  },
   "support": {
     "title": "Support center",
     "subtitle": "Resources and contact paths for safe delivery.",

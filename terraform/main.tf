@@ -34,6 +34,7 @@ module "compute" {
   dynamodb_table_arns = module.database.table_arns
   dynamodb_table_names = module.database.table_name_map
   cognito_user_pool_client_id = module.auth.user_pool_client_id
+  cognito_user_pool_id = module.auth.user_pool_id
 }
 
 module "iam" {
