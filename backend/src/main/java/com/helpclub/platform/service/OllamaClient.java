@@ -1,6 +1,7 @@
 package com.helpclub.platform.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -47,6 +48,33 @@ public class OllamaClient {
     }
 
     private record OllamaRequest(String model, Message[] messages, boolean stream) {
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) {
+                return true;
+            }
+            if (!(other instanceof OllamaRequest that)) {
+                return false;
+            }
+            return stream == that.stream
+                && java.util.Objects.equals(model, that.model)
+                && Arrays.equals(messages, that.messages);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = java.util.Objects.hash(model, stream);
+            result = 31 * result + Arrays.hashCode(messages);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "OllamaRequest[model=" + model
+                + ", messages=" + Arrays.toString(messages)
+                + ", stream=" + stream + "]";
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
