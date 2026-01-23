@@ -13,10 +13,6 @@ variable "aws_region" {
   default = "eu-north-1"
 }
 
-variable "frontend_image" {
-  type = string
-}
-
 variable "backend_image" {
   type = string
 }
