@@ -103,7 +103,7 @@ resource "aws_iam_role_policy" "task_dynamodb" {
 
 resource "aws_security_group" "alb" {
   name        = "${local.name_prefix}-alb-sg"
-  description = "ALB ingress for helpclub frontend"
+  description = "ALB ingress for helpclub backend"
   vpc_id      = var.vpc_id
 }
 
@@ -125,14 +125,6 @@ resource "aws_vpc_security_group_egress_rule" "alb_all" {
   security_group_id = aws_security_group.alb.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"
-}
-
-resource "aws_vpc_security_group_ingress_rule" "service_from_alb" {
-  security_group_id            = aws_security_group.service.id
-  referenced_security_group_id = aws_security_group.alb.id
-  from_port                    = var.container_port
-  ip_protocol                  = "tcp"
-  to_port                      = var.container_port
 }
 
 resource "aws_vpc_security_group_ingress_rule" "service_from_alb_backend" {
@@ -157,19 +149,6 @@ resource "aws_lb" "this" {
   subnets            = var.subnet_ids
 }
 
-resource "aws_lb_target_group" "frontend" {
-  name        = "${local.name_prefix}-tg-fe"
-  port        = var.container_port
-  protocol    = "HTTP"
-  target_type = "ip"
-  vpc_id      = var.vpc_id
-
-  health_check {
-    path     = "/health"
-    protocol = "HTTP"
-  }
-}
-
 resource "aws_lb_target_group" "backend" {
   name        = "${local.name_prefix}-tg-be"
   port        = 8080
@@ -190,23 +169,7 @@ resource "aws_lb_listener" "http" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.frontend.arn
-  }
-}
-
-resource "aws_lb_listener_rule" "backend_api" {
-  listener_arn = aws_lb_listener.http.arn
-  priority     = 10
-
-  action {
-    type             = "forward"
     target_group_arn = aws_lb_target_group.backend.arn
-  }
-
-  condition {
-    path_pattern {
-      values = ["/api/*"]
-    }
   }
 }
 
@@ -300,43 +263,6 @@ resource "aws_ecs_task_definition" "this" {
         }
       }
     },
-    {
-      name      = "helpclub-frontend"
-      image     = var.frontend_image
-      essential = true
-      portMappings = [
-        {
-          containerPort = var.container_port
-          protocol      = "tcp"
-        }
-      ]
-      environment = [
-        {
-          name  = "NEXT_PUBLIC_API_BASE_URL"
-          value = "http://127.0.0.1:8080"
-        },
-        {
-          name  = "COGNITO_REGION"
-          value = var.aws_region
-        },
-        {
-          name  = "COGNITO_USER_POOL_CLIENT_ID"
-          value = var.cognito_user_pool_client_id
-        },
-        {
-          name  = "COGNITO_USER_POOL_ID"
-          value = var.cognito_user_pool_id
-        }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = aws_cloudwatch_log_group.this.name
-          awslogs-region        = data.aws_region.current.name
-          awslogs-stream-prefix = "frontend"
-        }
-      }
-    }
   ])
 }
 
@@ -354,12 +280,6 @@ resource "aws_ecs_service" "this" {
     subnets          = var.subnet_ids
     security_groups  = [aws_security_group.service.id]
     assign_public_ip = true
-  }
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.frontend.arn
-    container_name   = "helpclub-frontend"
-    container_port   = var.container_port
   }
 
   load_balancer {

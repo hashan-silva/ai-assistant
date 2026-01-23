@@ -22,3 +22,11 @@ variable "dynamodb_table_arns" {
   type    = list(string)
   default = []
 }
+
+variable "frontend_bucket_arn" {
+  type = string
+}
+
+variable "frontend_distribution_arn" {
+  type = string
+}

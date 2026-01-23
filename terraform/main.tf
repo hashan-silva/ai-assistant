@@ -25,7 +25,6 @@ module "compute" {
   aws_region     = var.aws_region
   vpc_id         = module.network.vpc_id
   subnet_ids     = module.network.public_subnet_ids
-  frontend_image = var.frontend_image
   backend_image  = var.backend_image
   ollama_image   = var.ollama_image
   task_cpu       = var.task_cpu
@@ -33,8 +32,12 @@ module "compute" {
   desired_count  = var.desired_count
   dynamodb_table_arns = module.database.table_arns
   dynamodb_table_names = module.database.table_name_map
-  cognito_user_pool_client_id = module.auth.user_pool_client_id
-  cognito_user_pool_id = module.auth.user_pool_id
+}
+
+module "frontend" {
+  source      = "./modules/frontend"
+  project     = var.project
+  environment = var.environment
 }
 
 module "iam" {
@@ -45,4 +48,6 @@ module "iam" {
   ecs_service_name        = module.compute.service_name
   task_execution_role_arn = module.compute.task_execution_role_arn
   dynamodb_table_arns     = module.database.table_arns
+  frontend_bucket_arn     = module.frontend.bucket_arn
+  frontend_distribution_arn = module.frontend.cloudfront_distribution_arn
 }

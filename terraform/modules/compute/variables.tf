@@ -18,10 +18,6 @@ variable "subnet_ids" {
   type = list(string)
 }
 
-variable "frontend_image" {
-  type = string
-}
-
 variable "backend_image" {
   type = string
 }
@@ -46,11 +42,6 @@ variable "desired_count" {
   default = 1
 }
 
-variable "container_port" {
-  type    = number
-  default = 3000
-}
-
 variable "dynamodb_table_arns" {
   type    = list(string)
   default = []
@@ -61,10 +52,3 @@ variable "dynamodb_table_names" {
   default = {}
 }
 
-variable "cognito_user_pool_client_id" {
-  type = string
-}
-
-variable "cognito_user_pool_id" {
-  type = string
-}

@@ -46,3 +46,15 @@ output "deploy_secret_access_key" {
   value     = module.iam.secret_access_key
   sensitive = true
 }
+
+output "frontend_bucket_name" {
+  value = module.frontend.bucket_name
+}
+
+output "frontend_cloudfront_domain_name" {
+  value = module.frontend.cloudfront_domain_name
+}
+
+output "frontend_cloudfront_distribution_id" {
+  value = module.frontend.cloudfront_distribution_id
+}
