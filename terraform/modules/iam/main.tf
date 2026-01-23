@@ -78,6 +78,14 @@ data "aws_iam_policy_document" "deploy" {
   statement {
     effect = "Allow"
     actions = [
+      "s3:CreateBucket"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
       "s3:ListBucket"
     ]
     resources = [var.frontend_bucket_arn]
@@ -86,19 +94,57 @@ data "aws_iam_policy_document" "deploy" {
   statement {
     effect = "Allow"
     actions = [
+      "s3:DeleteBucket",
       "s3:GetObject",
+      "s3:GetBucketLocation",
+      "s3:PutBucketOwnershipControls",
+      "s3:PutBucketPublicAccessBlock",
+      "s3:PutBucketVersioning",
+      "s3:PutEncryptionConfiguration",
+      "s3:PutBucketPolicy",
       "s3:PutObject",
       "s3:DeleteObject"
     ]
-    resources = ["${var.frontend_bucket_arn}/*"]
+    resources = [
+      var.frontend_bucket_arn,
+      "${var.frontend_bucket_arn}/*"
+    ]
   }
 
   statement {
     effect = "Allow"
     actions = [
+      "cloudfront:CreateDistribution",
+      "cloudfront:CreateOriginAccessControl"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "cloudfront:UpdateDistribution",
+      "cloudfront:GetDistribution",
+      "cloudfront:DeleteDistribution",
+      "cloudfront:GetOriginAccessControl",
+      "cloudfront:UpdateOriginAccessControl",
+      "cloudfront:DeleteOriginAccessControl",
       "cloudfront:CreateInvalidation"
     ]
-    resources = [var.frontend_distribution_arn]
+    resources = [
+      var.frontend_distribution_arn,
+      "arn:aws:cloudfront::${data.aws_caller_identity.current.account_id}:distribution/*",
+      "arn:aws:cloudfront::${data.aws_caller_identity.current.account_id}:origin-access-control/*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "cloudfront:ListDistributions",
+      "cloudfront:ListOriginAccessControls"
+    ]
+    resources = ["*"]
   }
 }
 
