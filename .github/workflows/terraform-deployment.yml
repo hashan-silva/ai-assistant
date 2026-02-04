@@ -2,13 +2,12 @@ name: Deploy to AWS
 
 on:
   push:
-    branches: ["main", "v*"]
+    branches: ["main"]
     paths:
       - 'backend/**'
       - 'frontend/**'
       - 'terraform/**'
       - '.github/workflows/terraform-deployment.yml'
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,7 +17,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/helpclub-backend
+      BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/ai-assistant-backend
       FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/ai-assistant-frontend
 
     steps:
@@ -44,7 +43,6 @@ jobs:
           images: ${{ env.BACKEND_IMAGE }}
           tags: |
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-            type=ref,event=branch,enable=${{ startsWith(github.ref, 'refs/heads/v') }}
 
       - name: Extract frontend metadata
         id: meta-frontend
@@ -53,7 +51,6 @@ jobs:
           images: ${{ env.FRONTEND_IMAGE }}
           tags: |
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-            type=ref,event=branch,enable=${{ startsWith(github.ref, 'refs/heads/v') }}
 
       - name: Set up Node
         uses: actions/setup-node@v4

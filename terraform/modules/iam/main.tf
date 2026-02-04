@@ -57,27 +57,6 @@ data "aws_iam_policy_document" "deploy" {
   statement {
     effect = "Allow"
     actions = [
-      "dynamodb:CreateTable",
-      "dynamodb:DeleteTable",
-      "dynamodb:DescribeTable",
-      "dynamodb:TagResource",
-      "dynamodb:UntagResource",
-      "dynamodb:UpdateTable"
-    ]
-    resources = var.dynamodb_table_arns
-  }
-
-  statement {
-    effect = "Allow"
-    actions = [
-      "dynamodb:ListTables"
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    effect = "Allow"
-    actions = [
       "s3:CreateBucket"
     ]
     resources = ["*"]

@@ -1,337 +1,38 @@
 {
   "app": {
     "name": "ai-assistant",
-    "tagline": "Nordisk omsorg, tydliga vägar framåt",
-    "metaDescription": "ai-assistant samlar program, gemenskap och stöd för människor som bygger starkare lokala nätverk i Norden."
+    "tagline": "Open source-chatagent på AWS",
+    "metaDescription": "Komplett setup för en chat-AI-agent med Ollama, Spring Boot, Next.js och Terraform på AWS."
   },
-  "nav": {
-    "home": "Översikt",
-    "programs": "Program",
-    "community": "Gemenskap",
-    "chat": "Chatt",
-    "support": "Stöd",
-    "impact": "Påverkan",
-    "profile": "Profil"
-  },
-  "common": {
-    "language": "Språk",
-    "primaryAction": "Se dagens plan",
-    "secondaryAction": "Utforska program"
-  },
-  "home": {
-    "heroTitle": "Ett nordiskt hem för omsorg och möjligheter",
-    "heroBody": "ai-assistant kopplar samman människor, rådgivare och lokala resurser i hela Norden. Skapa rytm, följ upp mål och dela framsteg i en trygg miljö.",
-    "spotlightTitle": "Dagens fokus",
-    "spotlightBody": "Trygg start: samla behov, matcha mentorer och planera nästa steg med det lokala teamet.",
-    "scheduleTitle": "Dagens agenda",
-    "scheduleItems": {
-      "one": "09.00 Samordning med volontärer",
-      "two": "11.30 Individuella samtal",
-      "three": "15.00 Utvärdera veckans mål"
-    },
-    "statsTitle": "Lägesbild",
-    "stats": {
-      "members": "Aktiva medlemmar",
-      "partners": "Kommunala partners",
-      "sessions": "Stödsessioner denna månad",
-      "satisfaction": "Nöjdhetsindex"
-    },
-    "highlightsTitle": "Snabba översikter",
-    "highlights": {
-      "care": {
-        "title": "Omsorgsteam",
-        "body": "Koordinera kontaktpersoner och dela uppdrag i realtid."
-      },
-      "skills": {
-        "title": "Kompetensvägar",
-        "body": "Följ utbildningar, certifieringar och nästa steg."
-      },
-      "partnerships": {
-        "title": "Partnerskap",
-        "body": "Samla lokala samarbeten i en gemensam vy."
-      }
-    }
-  },
-  "landing": {
-    "eyebrow": "Börja här",
-    "title": "Välj din väg",
-    "subtitle": "Oavsett om du söker nästa roll eller ska anställa hjälper AI-assistenten dig genom samtalet.",
-    "roles": {
-      "seeker": {
-        "tag": "Jobbsökande",
-        "title": "Jag söker arbete",
-        "body": "Bygg en tydlig profil, lyft dina styrkor och matchas mot rätt möjligheter.",
-        "cta": "Starta som jobbsökande"
-      },
-      "poster": {
-        "tag": "Jobbannonsering",
-        "title": "Jag rekryterar",
-        "body": "Definiera rollen, sätt krav och publicera en jobbannons snabbare med strukturerade frågor.",
-        "cta": "Starta som arbetsgivare"
-      }
-    }
-  },
-  "programs": {
-    "title": "Programöversikt",
-    "subtitle": "Moduler för etablering, välmående och community-bygge.",
-    "cards": {
-      "mentorship": {
-        "title": "Mentorskap",
-        "body": "Matcha deltagare med handledare, boka möten och följ upp mål.",
-        "tag": "Pågående"
-      },
-      "language": {
-        "title": "Språk & vardag",
-        "body": "Stöd för språkträning, samhällskunskap och lokala rutiner.",
-        "tag": "Nytt"
-      },
-      "wellbeing": {
-        "title": "Välmående",
-        "body": "Skapa trygghet med strukturerade samtal och resurser.",
-        "tag": "Prioriterad"
-      },
-      "career": {
-        "title": "Arbetsliv",
-        "body": "Planera praktik, cv-workshops och arbetsmarknadskontakter.",
-        "tag": "Planerad"
-      }
-    }
-  },
-  "community": {
-    "title": "Gemenskap",
-    "subtitle": "Bygg relationer genom lokala aktiviteter och öppna forum.",
-    "events": {
-      "circle": {
-        "title": "Lokala samtalscirklar",
-        "body": "Veckomöten med fokus på trygghet och delaktighet.",
-        "time": "Onsdagar 18.00"
-      },
-      "makers": {
-        "title": "Makerspace",
-        "body": "Skapa tillsammans och dela praktiska kunskaper.",
-        "time": "Fredagar 15.00"
-      },
-      "outdoor": {
-        "title": "Friluftsdag",
-        "body": "Samling med naturvandring och fika.",
-        "time": "Lördag 10.00"
-      }
+  "auth": {
+    "loginTitle": "Logga in",
+    "loginSubtitle": "Använd e-post eller telefonnummer.",
+    "registerTitle": "Skapa konto",
+    "registerSubtitle": "Använd e-post eller telefonnummer som inloggnings-ID.",
+    "identifier": "E-post eller telefonnummer",
+    "password": "Lösenord",
+    "firstName": "Förnamn",
+    "lastName": "Efternamn",
+    "email": "E-post (valfritt)",
+    "phone": "Telefon (valfritt)",
+    "loginCta": "Logga in",
+    "registerCta": "Skapa konto",
+    "errors": {
+      "loginFailed": "Inloggning misslyckades",
+      "registerFailed": "Registrering misslyckades"
     }
   },
   "chat": {
-    "brand": "ai-assistant AI",
-    "title": "Samordningschatt",
-    "subtitle": "Live-rum för triage, onboarding och partnerskap.",
-    "audience": {
-      "jobSeeker": "Jobbsökande flöde",
-      "jobPoster": "Arbetsgivare flöde"
-    },
-    "sidebarTitle": "Aktiva rum",
-    "membersLabel": "medlemmar",
-    "status": {
-      "live": "Live",
-      "typing": "Skriver..."
-    },
-    "actions": {
-      "more": "Fler alternativ"
-    },
-    "presence": "6 personer online, svarstid under 2 min.",
-    "avatars": {
-      "one": "L",
-      "two": "A",
-      "three": "S",
-      "four": "M"
-    },
-    "quickRepliesTitle": "Snabbsvar",
-    "composerPlaceholder": "Skriv en uppdatering, be om täckning eller tagga någon...",
+    "roomName": "Huvudchatt",
+    "roomTopic": "Prata med assistenten i realtid.",
+    "statusLive": "Live",
+    "statusTyping": "Skriver...",
+    "presence": "Assistent online",
+    "composerPlaceholder": "Skriv ditt meddelande...",
     "sendLabel": "Skicka",
-    "time": {
-      "now": "Nu"
-    },
-    "people": {
-      "you": "Du",
-      "assistant": "ai-assistant AI-assistent",
-      "lisa": "Lisa Nordin",
-      "otto": "Otto Berg",
-      "mila": "Mila Ek",
-      "jonas": "Jonas Holm",
-      "elin": "Elin Sjöström",
-      "samir": "Samir Aziz"
-    },
-    "rooms": {
-      "care": {
-        "name": "Omsorgstriage",
-        "topic": "Eskaleringar och nästa steg för dagens ärenden.",
-        "status": "Jour"
-      },
-      "onboarding": {
-        "name": "Onboardingflöde",
-        "topic": "Trygga överlämningar, checklistor och första veckan.",
-        "status": "Mentorer"
-      },
-      "partners": {
-        "name": "Partnerdesk",
-        "topic": "Kommunala avstämningar och gemensam kapacitet.",
-        "status": "Partners"
-      }
-    },
-    "focus": {
-      "title": "Skiftfokus",
-      "one": "Bekräfta täckning för eftermiddagspasset.",
-      "two": "Skicka onboarding-checklistan till kommunala kontaktpersoner.",
-      "three": "Samla två framgångsexempel till veckorapporten."
-    },
-    "messages": {
-      "care": {
-        "one": "Vi har två nya remisser från Umea. Kan vi bekräfta transporten?",
-        "two": "Jag kan ta transporten. Finns medicinska noteringar jag ska flagga?",
-        "three": "Ja, astma i profilen och behov av svensk tolk."
-      },
-      "onboarding": {
-        "one": "Nya gruppen startar på måndag. Har vi välkomstpaketet klart?",
-        "two": "Jag färdigställer paketet idag och skickar checklistan.",
-        "three": "Bra. Jag informerar mentorerna kl 14.00."
-      },
-      "partners": {
-        "one": "Gothenburg-teamet bad om en gemensam session nästa vecka.",
-        "two": "Vi kan föreslå onsdag förmiddag och dela agendan.",
-        "three": "Jag bekräftar tiden och uppdaterar kalendern."
-      }
-    },
-    "quickReplies": {
-      "checkin": "Jag kollar läget för öppna ärenden.",
-      "summary": "Delar en snabb status.",
-      "schedule": "Kan vi synka schemat?"
-    },
-    "autoReplies": {
-      "care": "Jag kan ta in sjuksköterskesamordnaren och skriva uppdateringen.",
-      "onboarding": "På gång. Jag lägger upp den sista checklistan om 15 minuter.",
-      "partners": "Jag meddelar kommunen och bekräftar tiden."
-    },
     "errors": {
-      "requestFailed": "Kunde inte nå ai-assistant AI-assistenten. Försök igen.",
-      "emptyReply": "ai-assistant AI-assistenten gav inget svar."
-    }
-  },
-  "auth": {
-    "loginTitle": "Välkommen tillbaka",
-    "loginSubtitle": "Logga in med ditt personnummer.",
-    "registerTitle": "Skapa konto",
-    "registerSubtitle": "Gå med i ai-assistant med dina uppgifter.",
-    "personalNumber": "Personnummer",
-    "email": "E-postadress",
-    "phone": "Telefonnummer",
-    "phoneHint": "Använd E.164-format, t.ex. +46701234567",
-    "firstName": "Förnamn",
-    "lastName": "Efternamn",
-    "city": "Stad",
-    "profileType": "Profiltyp",
-    "profileOptions": {
-      "job_seeker": "Jobbsökare",
-      "job_poster": "Arbetsgivare",
-      "both": "Jobbsökare och arbetsgivare"
-    },
-    "password": "Lösenord",
-    "loginCta": "Logga in",
-    "registerCta": "Skapa konto",
-    "loading": "Arbetar...",
-    "noAccount": "Inget konto än?",
-    "haveAccount": "Har du redan ett konto?",
-    "registerLink": "Registrera",
-    "loginLink": "Logga in",
-    "errors": {
-      "loginFailed": "Det gick inte att logga in just nu.",
-      "registerFailed": "Det gick inte att skapa konto."
-    }
-  },
-  "myProfile": {
-    "title": "Min profil",
-    "subtitle": "Håll dina kontaktuppgifter och preferenser uppdaterade.",
-    "sectionTitle": "Profiluppgifter",
-    "sectionBody": "Uppgifterna hjälper oss att matcha dig med rätt möjligheter.",
-    "personalNumberHint": "Det här är kopplat till ditt konto och kan inte ändras.",
-    "saveCta": "Spara ändringar",
-    "saving": "Sparar...",
-    "loadError": "Det gick inte att hämta profilen just nu.",
-    "saveError": "Det gick inte att uppdatera profilen just nu.",
-    "saveSuccess": "Profilen är uppdaterad."
-  },
-  "support": {
-    "title": "Stödcenter",
-    "subtitle": "Resurser och kontaktvägar för trygg leverans.",
-    "resources": {
-      "care": {
-        "title": "Krisstöd",
-        "body": "Snabba eskaleringar, journummer och guidning.",
-        "cta": "Se rutiner"
-      },
-      "legal": {
-        "title": "Rättigheter",
-        "body": "Samlad information om regler och lokala riktlinjer.",
-        "cta": "Läs mer"
-      },
-      "funding": {
-        "title": "Finansiering",
-        "body": "Översikt över lokala stöd, stipendier och bidrag.",
-        "cta": "Utforska"
-      }
-    },
-    "contact": {
-      "title": "Kontakt",
-      "body": "Skriv till teamet eller boka ett uppföljande möte."
-    }
-  },
-  "impact": {
-    "title": "Påverkan",
-    "subtitle": "Mätning av trygghet, delaktighet och långsiktiga resultat.",
-    "metrics": {
-      "engagement": {
-        "title": "Delaktighet",
-        "body": "Andel deltagare som når veckomål.",
-        "value": "82%"
-      },
-      "continuity": {
-        "title": "Kontinuitet",
-        "body": "Program som följer tidsplanen.",
-        "value": "91%"
-      },
-      "capacity": {
-        "title": "Kapacitet",
-        "body": "Tillgängliga stödinsatser per region.",
-        "value": "24"
-      },
-      "wellbeing": {
-        "title": "Välmående",
-        "body": "Positivt självskattat välmående.",
-        "value": "4.6/5"
-      }
-    }
-  },
-  "profile": {
-    "title": "Profil",
-    "subtitle": "Samlad översikt över din roll, uppgifter och mål.",
-    "summary": {
-      "nameLabel": "Roll",
-      "nameValue": "Regional samordnare",
-      "regionLabel": "Region",
-      "regionValue": "Sverige, Västra",
-      "statusLabel": "Status",
-      "statusValue": "Aktiv"
-    },
-    "nextSteps": {
-      "title": "Nästa steg",
-      "one": "Bekräfta mentorskap för nya deltagare.",
-      "two": "Planera nästa veckas gemenskapsaktivitet.",
-      "three": "Följ upp välmåendeundersökningen."
-    }
-  },
-  "footer": {
-    "title": "Bygger tryggare gemenskaper",
-    "body": "ai-assistant stödjer lokala team i hela Norden med planering, samordning och uppföljning.",
-    "links": {
-      "privacy": "Integritet",
-      "terms": "Villkor",
-      "contact": "Kontakta oss"
+      "requestFailed": "Kunde inte nå AI-assistenten. Försök igen.",
+      "emptyReply": "Assistenten returnerade inget svar."
     }
   }
 }

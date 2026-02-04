@@ -42,13 +42,3 @@ variable "desired_count" {
   default = 1
 }
 
-variable "dynamodb_table_arns" {
-  type    = list(string)
-  default = []
-}
-
-variable "dynamodb_table_names" {
-  type    = map(string)
-  default = {}
-}
-

@@ -1,14 +1,13 @@
 # Repository Guidelines
 
 ## Project Mission
-- This repository builds an open-source chat AI agent platform.
-- The goal is to let contributors ship a practical, self-hostable assistant with a web UI, API layer, and infrastructure-as-code.
-- The agent must support prompt versioning, structured outputs, and reliable integration with Ollama-based local models.
+- This repository publishes a complete reference setup for an open-source chat AI agent.
+- The goal is to provide a practical, deployable stack: Ollama + Spring Boot (Java) + Next.js (React) + Terraform on AWS.
+- The agent must support prompt versioning and reliable model integration so contributors can fork and ship quickly.
 
 ## Project Structure & Module Organization
 - `backend/` - Spring Boot service (Maven); core logic in `src/main/java`, app config + AI prompt assets in `src/main/resources`, tests in `src/test/java`.
 - `frontend/` - Next.js 14 + TypeScript app with Material UI and SCSS; routes in `src/app`, shared UI in `src/components`, utilities in `src/lib`, styles in `src/styles`.
-- `database/` - Oracle DDL in `schema/` and deterministic seed SQL in `seeds/`, mirrored by Flyway scripts where applicable.
 - `terraform/` - IaC root stack and modules (for example `network`, `compute`, `cicd`, `iam`); keep module files split into `main.tf`, `variables.tf`, and `outputs.tf`.
 
 ## Core Product Flows

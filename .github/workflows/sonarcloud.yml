@@ -43,6 +43,6 @@ jobs:
         with:
           args: >
             -Dsonar.organization=hashan-silva
-            -Dsonar.projectKey=hashan-silva_helpclub
+            -Dsonar.projectKey=hashan-silva_ai-assistant
             -Dsonar.sources=backend/src/main,frontend/src,terraform
             -Dsonar.java.binaries=backend/target/classes

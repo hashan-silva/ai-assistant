@@ -18,14 +18,6 @@ output "ecs_service_name" {
   value = module.compute.service_name
 }
 
-output "dynamodb_table_names" {
-  value = module.database.table_names
-}
-
-output "dynamodb_table_arns" {
-  value = module.database.table_arns
-}
-
 output "cognito_user_pool_id" {
   value = module.auth.user_pool_id
 }
