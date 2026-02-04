@@ -195,7 +195,7 @@ export default function ChatPage() {
     return () => {
       cancelled = true;
     };
-  }, [chatEndpoint, t]);
+  }, [chatEndpoint]);
 
   const handleSend = async (message: string) => {
     const trimmed = message.trim();

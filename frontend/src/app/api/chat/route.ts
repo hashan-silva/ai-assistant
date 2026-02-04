@@ -1,4 +1,16 @@
 import {NextResponse} from 'next/server';
+import {cookies} from 'next/headers';
+
+const resolveAccessToken = () => cookies().get('helpclub_access_token')?.value;
+
+const buildHeaders = () => {
+  const headers: Record<string, string> = {'Content-Type': 'application/json'};
+  const token = resolveAccessToken();
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  return headers;
+};
 
 export async function POST(request: Request) {
   const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:8080';
@@ -11,9 +23,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    const response = await fetch(`${apiBaseUrl}/api/chat/job-seeker`, {
+    const response = await fetch(`${apiBaseUrl}/api/chat`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: buildHeaders(),
       body: JSON.stringify(payload)
     });
     const text = await response.text();

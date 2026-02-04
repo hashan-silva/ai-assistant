@@ -26,7 +26,8 @@
 
 ## Deployment & Automation
 - Deployments are CI-driven via GitHub Actions; avoid manual `terraform apply` and ad-hoc production deploys.
-- Docker images are built in CI and promoted through the pipeline.
+- Backend Docker images are built in CI and promoted through the pipeline.
+- Frontend is deployed as static assets to S3 with CloudFront invalidation (no frontend runtime container).
 - Keep AWS deployments serverless-first (ECS Fargate, ALB, managed data services) instead of EC2 hosts.
 - Use least-privilege IAM permissions for deployment users, roles, and automation.
 

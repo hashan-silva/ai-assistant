@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/helpclub-backend
-      FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/helpclub-frontend
+      FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/ai-assistant-frontend
 
     steps:
       - name: Checkout
@@ -82,7 +82,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Build and push frontend
+      - name: Build and push frontend image
         id: build-frontend
         uses: docker/build-push-action@v6
         with:
@@ -93,11 +93,10 @@ jobs:
           labels: ${{ steps.meta-frontend.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      
-      - name: Set image digests
+
+      - name: Set backend image digest
         run: |
           echo "BACKEND_IMAGE_DIGEST=${{ env.BACKEND_IMAGE }}@${{ steps.build-backend.outputs.digest }}" >> $GITHUB_ENV
-          echo "FRONTEND_IMAGE_DIGEST=${{ env.FRONTEND_IMAGE }}@${{ steps.build-frontend.outputs.digest }}" >> $GITHUB_ENV
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
