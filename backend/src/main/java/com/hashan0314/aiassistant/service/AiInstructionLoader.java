@@ -1,4 +1,4 @@
-package com.helpclub.platform.service;
+package com.hashan0314.aiassistant.service;
 
 import java.io.IOException;
 import java.io.InputStream;

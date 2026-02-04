@@ -1,4 +1,4 @@
-package com.helpclub.platform;
+package com.hashan0314.aiassistant;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,9 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
-public class HelpclubApplication {
+public class AiAssistantApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(HelpclubApplication.class, args);
+        SpringApplication.run(AiAssistantApplication.class, args);
     }
 }

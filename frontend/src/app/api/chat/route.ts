@@ -1,7 +1,7 @@
 import {NextResponse} from 'next/server';
 import {cookies} from 'next/headers';
 
-const resolveAccessToken = () => cookies().get('helpclub_access_token')?.value;
+const resolveAccessToken = () => cookies().get('ai-assistant_access_token')?.value;
 
 const buildHeaders = () => {
   const headers: Record<string, string> = {'Content-Type': 'application/json'};

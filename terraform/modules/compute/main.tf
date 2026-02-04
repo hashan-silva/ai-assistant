@@ -103,7 +103,7 @@ resource "aws_iam_role_policy" "task_dynamodb" {
 
 resource "aws_security_group" "alb" {
   name        = "${local.name_prefix}-alb-sg"
-  description = "ALB ingress for helpclub backend"
+  description = "ALB ingress for ai-assistant backend"
   vpc_id      = var.vpc_id
 }
 
@@ -184,12 +184,12 @@ resource "aws_ecs_task_definition" "this" {
 
   container_definitions = jsonencode([
     {
-      name      = "helpclub-ollama"
+      name      = "ai-assistant-ollama"
       image     = var.ollama_image
       essential = true
       entryPoint = ["/bin/sh", "-c"]
       command = [
-        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull llama3.2:1b; wait"
+        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull qwen2.5:3b; wait"
       ]
       portMappings = [
         {
@@ -207,7 +207,7 @@ resource "aws_ecs_task_definition" "this" {
       }
     },
     {
-      name      = "helpclub-backend"
+      name      = "ai-assistant-backend"
       image     = var.backend_image
       essential = true
       portMappings = [
@@ -223,7 +223,7 @@ resource "aws_ecs_task_definition" "this" {
         },
         {
           name  = "OLLAMA_MODEL"
-          value = "llama3.2:1b"
+          value = "qwen2.5:3b"
         },
         {
           name  = "AWS_REGION"
@@ -284,7 +284,7 @@ resource "aws_ecs_service" "this" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.backend.arn
-    container_name   = "helpclub-backend"
+    container_name   = "ai-assistant-backend"
     container_port   = 8080
   }
 

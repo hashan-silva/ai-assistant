@@ -1,4 +1,4 @@
-package com.helpclub.platform.api.dto;
+package com.hashan0314.aiassistant.api.dto;
 
 public class ChatRequest {
 

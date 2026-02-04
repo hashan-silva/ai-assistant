@@ -32,7 +32,7 @@
 - Use least-privilege IAM permissions for deployment users, roles, and automation.
 
 ## Coding Style & Naming Conventions
-- Java: 4-space indentation, package names under `com.helpclub.*`, classes in `PascalCase`, explicit Spring annotations.
+- Java: 4-space indentation, package names under `com.hashan0314.aiassistant.*`, classes in `PascalCase`, explicit Spring annotations.
 - TypeScript/React: 2-space indentation, components in `PascalCase`, hooks/helpers in `camelCase`, follow Next.js + ESLint defaults.
 - Terraform: `snake_case` inputs, lowercase outputs, one resource block per concern.
 

@@ -1,4 +1,4 @@
-# Helpclub Frontend
+# ai-assistant Frontend
 
 Next.js app for the freelancer marketplace experience.
 

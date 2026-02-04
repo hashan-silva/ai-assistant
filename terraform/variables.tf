@@ -1,11 +1,11 @@
 variable "project" {
   type    = string
-  default = "helpclub"
+  default = "ai-assistant"
 }
 
 variable "environment" {
   type    = string
-  default = "helpclub"
+  default = "ai-assistant"
 }
 
 variable "aws_region" {

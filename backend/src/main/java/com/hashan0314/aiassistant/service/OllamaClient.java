@@ -1,4 +1,4 @@
-package com.helpclub.platform.service;
+package com.hashan0314.aiassistant.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package com.helpclub.platform.api;
+package com.hashan0314.aiassistant.api;
 
 import java.util.Map;
 import org.springframework.http.HttpStatus;

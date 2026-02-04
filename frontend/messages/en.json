@@ -1,8 +1,8 @@
 {
   "app": {
-    "name": "Helpclub",
+    "name": "ai-assistant",
     "tagline": "Nordic care with a clear path forward",
-    "metaDescription": "Helpclub brings programs, community, and support together for teams building stronger local networks across the Nordics."
+    "metaDescription": "ai-assistant brings programs, community, and support together for teams building stronger local networks across the Nordics."
   },
   "nav": {
     "home": "Overview",
@@ -20,7 +20,7 @@
   },
   "home": {
     "heroTitle": "A Nordic home for care and opportunity",
-    "heroBody": "Helpclub connects people, advisors, and local resources across the region. Build rhythm, track goals, and share progress in a trusted space.",
+    "heroBody": "ai-assistant connects people, advisors, and local resources across the region. Build rhythm, track goals, and share progress in a trusted space.",
     "spotlightTitle": "Today's focus",
     "spotlightBody": "Safe start: gather needs, match mentors, and align next steps with the local team.",
     "scheduleTitle": "Today's agenda",
@@ -119,7 +119,7 @@
     }
   },
   "chat": {
-    "brand": "Helpclub AI",
+    "brand": "ai-assistant AI",
     "title": "Care coordination chat",
     "subtitle": "Live rooms for triage, onboarding, and partner alignment.",
     "audience": {
@@ -150,7 +150,7 @@
     },
     "people": {
       "you": "You",
-      "assistant": "Helpclub AI assistant",
+      "assistant": "ai-assistant AI assistant",
       "lisa": "Lisa Nordin",
       "otto": "Otto Berg",
       "mila": "Mila Ek",
@@ -209,15 +209,15 @@
       "partners": "I will notify the municipality and confirm the call time."
     },
     "errors": {
-      "requestFailed": "Couldn't reach the Helpclub AI assistant. Try again.",
-      "emptyReply": "The Helpclub AI assistant did not return a reply."
+      "requestFailed": "Couldn't reach the ai-assistant AI assistant. Try again.",
+      "emptyReply": "The ai-assistant AI assistant did not return a reply."
     }
   },
   "auth": {
     "loginTitle": "Welcome back",
     "loginSubtitle": "Sign in with your personal number.",
     "registerTitle": "Create your account",
-    "registerSubtitle": "Join Helpclub with your personal details.",
+    "registerSubtitle": "Join ai-assistant with your personal details.",
     "personalNumber": "Personal number",
     "email": "Email address",
     "phone": "Phone number",
@@ -327,7 +327,7 @@
   },
   "footer": {
     "title": "Building safer communities",
-    "body": "Helpclub supports local teams across the Nordics with planning, coordination, and follow-up.",
+    "body": "ai-assistant supports local teams across the Nordics with planning, coordination, and follow-up.",
     "links": {
       "privacy": "Privacy",
       "terms": "Terms",

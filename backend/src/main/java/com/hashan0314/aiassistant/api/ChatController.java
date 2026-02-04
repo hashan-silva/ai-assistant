@@ -1,8 +1,8 @@
-package com.helpclub.platform.api;
+package com.hashan0314.aiassistant.api;
 
-import com.helpclub.platform.api.dto.ChatRequest;
-import com.helpclub.platform.api.dto.ChatResponse;
-import com.helpclub.platform.service.ChatService;
+import com.hashan0314.aiassistant.api.dto.ChatRequest;
+import com.hashan0314.aiassistant.api.dto.ChatResponse;
+import com.hashan0314.aiassistant.service.ChatService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

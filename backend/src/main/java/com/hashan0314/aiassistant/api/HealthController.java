@@ -1,4 +1,4 @@
-package com.helpclub.platform.api;
+package com.hashan0314.aiassistant.api;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

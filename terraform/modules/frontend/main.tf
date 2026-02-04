@@ -48,7 +48,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "frontend" {
 
 resource "aws_cloudfront_origin_access_control" "frontend" {
   name                              = "${local.name_prefix}-frontend-oac"
-  description                       = "OAC for Helpclub frontend assets"
+  description                       = "OAC for ai-assistant frontend assets"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"

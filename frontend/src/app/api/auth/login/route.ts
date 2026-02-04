@@ -12,6 +12,33 @@ type LoginPayload = {
   password?: string;
 };
 
+const setAuthCookies = (
+  response: NextResponse,
+  authResult: {AccessToken?: string; IdToken?: string; RefreshToken?: string}
+) => {
+  if (authResult.AccessToken) {
+    response.cookies.set('ai-assistant_access_token', authResult.AccessToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/'
+    });
+  }
+  if (authResult.IdToken) {
+    response.cookies.set('ai-assistant_id_token', authResult.IdToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/'
+    });
+  }
+  if (authResult.RefreshToken) {
+    response.cookies.set('ai-assistant_refresh_token', authResult.RefreshToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/'
+    });
+  }
+};
+
 const getClient = () => {
   const region = process.env.COGNITO_REGION;
   const clientId = process.env.COGNITO_USER_POOL_CLIENT_ID;
@@ -53,25 +80,7 @@ export async function POST(request: Request) {
     }
 
     const response = NextResponse.json({ok: true});
-    response.cookies.set('helpclub_access_token', accessToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      path: '/'
-    });
-    if (result.AuthenticationResult?.IdToken) {
-      response.cookies.set('helpclub_id_token', result.AuthenticationResult.IdToken, {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/'
-      });
-    }
-    if (result.AuthenticationResult?.RefreshToken) {
-      response.cookies.set('helpclub_refresh_token', result.AuthenticationResult.RefreshToken, {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/'
-      });
-    }
+    setAuthCookies(response, result.AuthenticationResult || {});
     return response;
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Login failed';

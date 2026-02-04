@@ -1,5 +1,5 @@
 {
-  "name": "helpclub-frontend",
+  "name": "ai-assistant-frontend",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -4,7 +4,7 @@ terraform {
     organization = "hashan-silva"
 
     workspaces {
-      prefix = "helpclub-"
+      prefix = "ai-assistant-"
     }
   }
 }
