@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <style>
+    .box { fill: #E2E8F0; stroke: #334155; stroke-width: 2; }
+    .label { fill: #0F172A; font-family: Arial, sans-serif; font-size: 18px; text-anchor: middle; dominant-baseline: middle; }
+    .note { fill: #475569; font-family: Arial, sans-serif; font-size: 14px; }
+    .arrow { stroke: #1E293B; stroke-width: 3; fill: none; marker-end: url(#arrowhead); }
+  </style>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#1E293B" />
+    </marker>
+  </defs>
+
+  <rect class="box" x="60" y="70" width="180" height="70" rx="10" />
+  <text class="label" x="150" y="105">User</text>
+
+  <rect class="box" x="300" y="70" width="200" height="70" rx="10" />
+  <text class="label" x="400" y="105">CloudFront</text>
+
+  <rect class="box" x="540" y="70" width="240" height="70" rx="10" />
+  <text class="label" x="660" y="105">S3 Static Frontend</text>
+
+  <rect class="box" x="840" y="70" width="240" height="70" rx="10" />
+  <text class="label" x="960" y="105">Next.js App</text>
+
+  <rect class="box" x="840" y="240" width="240" height="70" rx="10" />
+  <text class="label" x="960" y="275">Cognito</text>
+
+  <rect class="box" x="540" y="240" width="240" height="70" rx="10" />
+  <text class="label" x="660" y="275">ALB</text>
+
+  <rect class="box" x="300" y="240" width="200" height="70" rx="10" />
+  <text class="label" x="400" y="275">ECS Fargate</text>
+
+  <rect class="box" x="60" y="240" width="180" height="70" rx="10" />
+  <text class="label" x="150" y="275">Spring Boot API</text>
+
+  <rect class="box" x="60" y="400" width="180" height="70" rx="10" />
+  <text class="label" x="150" y="435">Ollama Runtime</text>
+
+  <rect class="box" x="540" y="520" width="240" height="60" rx="10" />
+  <text class="label" x="660" y="550">GitHub Actions</text>
+
+  <rect class="box" x="840" y="520" width="240" height="60" rx="10" />
+  <text class="label" x="960" y="550">Terraform</text>
+
+  <path class="arrow" d="M240 105 L300 105" />
+  <path class="arrow" d="M500 105 L540 105" />
+  <path class="arrow" d="M780 105 L840 105" />
+
+  <path class="arrow" d="M960 140 L960 240" />
+  <text class="note" x="990" y="200">Auth</text>
+
+  <path class="arrow" d="M700 140 L680 240" />
+  <text class="note" x="690" y="200">API</text>
+
+  <path class="arrow" d="M540 275 L500 275" />
+  <path class="arrow" d="M300 275 L240 275" />
+  <path class="arrow" d="M150 310 L150 400" />
+
+  <path class="arrow" d="M780 550 L840 550" />
+
+  <path class="arrow" d="M660 520 L660 330" />
+  <path class="arrow" d="M960 520 L960 330" />
+</svg>

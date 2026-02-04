@@ -61,6 +61,8 @@ flowchart LR
     terraform --> cognito
 ```
 
+![Architecture diagram](docs/architecture.svg)
+
 ## Project layout
 
 ```text
