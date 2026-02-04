@@ -1,18 +1,8 @@
 package com.helpclub.platform.service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-
-@Configuration
+/**
+ * Legacy DynamoDB configuration (removed in the simple chat app).
+ */
+@Deprecated
 public class DynamoDbConfig {
-
-    @Bean
-    public DynamoDbClient dynamoDbClient(@Value("${dynamodb.region}") String region) {
-        return DynamoDbClient.builder()
-            .region(Region.of(region))
-            .build();
-    }
 }

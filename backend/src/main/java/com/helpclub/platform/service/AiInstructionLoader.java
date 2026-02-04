@@ -18,8 +18,7 @@ public class AiInstructionLoader {
         this.instructions = load(version, resourceLoader);
     }
 
-    public String buildPrompt(String message, InstructionAudience audience) {
-        String systemPrompt = instructions.systemPrompt(audience);
+    public String buildPrompt(String message) {
         String schemaBlock = formatOptionalBlock("Schema", instructions.schemaJson());
         String configBlock = formatOptionalBlock("Model config", instructions.modelConfig());
         return """
@@ -27,18 +26,16 @@ public class AiInstructionLoader {
 
             %s%sUser message:
             %s
-            """.formatted(systemPrompt, schemaBlock, configBlock, message);
+            """.formatted(instructions.systemPrompt(), schemaBlock, configBlock, message);
     }
 
     private AiInstructions load(String version, ResourceLoader resourceLoader) {
         String basePath = "classpath:ai/" + version + "/";
-        String jobSeekerPrompt = readRequired(resourceLoader.getResource(basePath + "system-job-seeker.md"),
-            "system-job-seeker.md", version);
-        String jobPosterPrompt = readRequired(resourceLoader.getResource(basePath + "system-job-poster.md"),
-            "system-job-poster.md", version);
+        String systemPrompt = readRequired(resourceLoader.getResource(basePath + "system.md"),
+            "system.md", version);
         String schemaJson = readOptional(resourceLoader.getResource(basePath + "schema.json"));
         String modelConfig = readOptional(resourceLoader.getResource(basePath + "config.yml"));
-        return new AiInstructions(jobSeekerPrompt, jobPosterPrompt, schemaJson, modelConfig);
+        return new AiInstructions(systemPrompt, schemaJson, modelConfig);
     }
 
     private String readRequired(Resource resource, String filename, String version) {
@@ -71,15 +68,8 @@ public class AiInstructionLoader {
         return title + ":\n" + content + "\n\n";
     }
 
-    private record AiInstructions(String jobSeekerPrompt,
-                                  String jobPosterPrompt,
+    private record AiInstructions(String systemPrompt,
                                   String schemaJson,
                                   String modelConfig) {
-        private String systemPrompt(InstructionAudience audience) {
-            return switch (audience) {
-                case JOB_SEEKER -> jobSeekerPrompt;
-                case JOB_POSTER -> jobPosterPrompt;
-            };
-        }
     }
 }

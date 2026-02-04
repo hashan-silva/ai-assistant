@@ -3,7 +3,6 @@
 import {useEffect, useMemo, useState} from 'react';
 import {
   Avatar,
-  AvatarGroup,
   Box,
   Button,
   Card,
@@ -16,8 +15,6 @@ import {
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import SendIcon from '@mui/icons-material/Send';
-import {useTranslations} from 'next-intl';
-import {useSearchParams} from 'next/navigation';
 
 type Message = {
   id: string;
@@ -97,19 +94,31 @@ const renderMarkdown = (value: string) => {
 };
 
 export default function ChatPage() {
-  const t = useTranslations('chat');
-  const searchParams = useSearchParams();
-  const roleParam = searchParams.get('role');
-  const audience = roleParam === 'job-poster' ? 'job-poster' : 'job-seeker';
-  const chatEndpoint = audience === 'job-poster'
-    ? '/api/chat/job-poster'
-    : '/api/chat/job-seeker';
-  const audienceLabel = audience === 'job-poster'
-    ? t('audience.jobPoster')
-    : t('audience.jobSeeker');
+  const copy = {
+    roomName: 'Main chat',
+    roomTopic: 'Talk with the assistant in real time.',
+    introPrompt: 'Introduce yourself as a helpful AI assistant for a simple chat app.',
+    statusLive: 'Live',
+    statusTyping: 'Typing...',
+    actionsMore: 'More options',
+    presence: 'Assistant online',
+    avatar: 'AI',
+    composerPlaceholder: 'Type your message...',
+    sendLabel: 'Send',
+    timeNow: 'Now',
+    people: {
+      you: 'You',
+      assistant: 'AI assistant'
+    },
+    errors: {
+      requestFailed: "Couldn't reach the AI assistant. Try again.",
+      emptyReply: 'The assistant did not return a reply.'
+    }
+  };
+  const chatEndpoint = '/api/chat';
   const activeRoom = {
-    name: t('rooms.care.name'),
-    topic: t('rooms.care.topic')
+    name: copy.roomName,
+    topic: copy.roomTopic
   };
   const [messages, setMessages] = useState<Message[]>([]);
   const [composer, setComposer] = useState('');
@@ -124,18 +133,17 @@ export default function ChatPage() {
       ...messages,
       {
         id: 'assistant-typing',
-        author: t('people.assistant'),
+        author: copy.people.assistant,
         content: '',
-        time: t('status.typing'),
+        time: copy.statusTyping,
         isTyping: true
       }
     ];
-  }, [isAssistantTyping, messages, t]);
+  }, [isAssistantTyping, messages, copy.people.assistant, copy.statusTyping]);
 
   useEffect(() => {
     let cancelled = false;
-    const introPrompt =
-      'Introduce yourself as the Helpclub AI agent and explain how you can help in this chat.';
+    const introPrompt = copy.introPrompt;
 
     const wait = (ms: number) =>
       new Promise((resolve) => {
@@ -158,17 +166,17 @@ export default function ChatPage() {
             payload = null;
           }
           if (!response.ok) {
-            throw new Error(payload?.error || t('errors.requestFailed'));
+            throw new Error(payload?.error || copy.errors.requestFailed);
           }
-          const replyText = payload?.reply?.trim() || t('errors.emptyReply');
+          const replyText = payload?.reply?.trim() || copy.errors.emptyReply;
           if (!cancelled) {
             setMessages((prev) => [
               ...prev,
               {
                 id: `assistant-${Date.now()}`,
-                author: t('people.assistant'),
+                author: copy.people.assistant,
                 content: replyText,
-                time: t('time.now')
+                time: copy.timeNow
               }
             ]);
           }
@@ -197,9 +205,9 @@ export default function ChatPage() {
 
     const userMessage: Message = {
       id: `user-${Date.now()}`,
-      author: t('people.you'),
+      author: copy.people.you,
       content: trimmed,
-      time: t('time.now'),
+      time: copy.timeNow,
       self: true
     };
 
@@ -221,24 +229,24 @@ export default function ChatPage() {
         payload = null;
       }
       if (!response.ok) {
-        throw new Error(payload?.error || t('errors.requestFailed'));
+        throw new Error(payload?.error || copy.errors.requestFailed);
       }
-      const replyText = payload?.reply?.trim() || t('errors.emptyReply');
+      const replyText = payload?.reply?.trim() || copy.errors.emptyReply;
       const reply: Message = {
         id: `assistant-${Date.now()}`,
-        author: t('people.assistant'),
+        author: copy.people.assistant,
         content: replyText,
-        time: t('time.now')
+        time: copy.timeNow
       };
       setMessages((prev) => [...prev, reply]);
     } catch (error) {
       const reply: Message = {
         id: `assistant-${Date.now()}`,
-        author: t('people.assistant'),
+        author: copy.people.assistant,
         content: error instanceof Error && error.message
           ? error.message
-          : t('errors.requestFailed'),
-        time: t('time.now')
+          : copy.errors.requestFailed,
+        time: copy.timeNow
       };
       setMessages((prev) => [...prev, reply]);
     } finally {
@@ -260,22 +268,16 @@ export default function ChatPage() {
                 </Typography>
               </Stack>
               <Stack direction="row" spacing={1} alignItems="center">
-                <Chip label={t('status.live')} size="small" color="primary" />
-                <Chip label={audienceLabel} size="small" variant="outlined" />
-                <IconButton aria-label={t('actions.more')}>
+                <Chip label={copy.statusLive} size="small" color="primary" />
+                <IconButton aria-label={copy.actionsMore}>
                   <MoreHorizIcon />
                 </IconButton>
               </Stack>
             </Stack>
             <Stack direction="row" spacing={2} alignItems="center">
-              <AvatarGroup max={4}>
-                <Avatar>{t('avatars.one')}</Avatar>
-                <Avatar>{t('avatars.two')}</Avatar>
-                <Avatar>{t('avatars.three')}</Avatar>
-                <Avatar>{t('avatars.four')}</Avatar>
-              </AvatarGroup>
+              <Avatar>{copy.avatar}</Avatar>
               <Typography variant="body2" color="text.secondary">
-                {t('presence')}
+                {copy.presence}
               </Typography>
             </Stack>
           </Stack>
@@ -321,7 +323,7 @@ export default function ChatPage() {
                 multiline
                 minRows={2}
                 value={composer}
-                placeholder={t('composerPlaceholder')}
+                placeholder={copy.composerPlaceholder}
                 onChange={(event) => setComposer(event.target.value)}
                 disabled={isSending || isAssistantTyping}
                 onKeyDown={(event) => {
@@ -338,7 +340,7 @@ export default function ChatPage() {
                 disabled={isSending || isAssistantTyping || composer.trim().length === 0}
                 sx={{alignSelf: {xs: 'stretch', sm: 'flex-end'}}}
               >
-                {t('sendLabel')}
+                {copy.sendLabel}
               </Button>
             </Stack>
           </Stack>

@@ -1,54 +1,55 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
-- `backend/` – Spring Boot service (Maven) with domain logic under `src/main/java`, configuration + Flyway migrations under `src/main/resources`, and tests in `src/test/java`.
-- `frontend/` – Next.js 14 + TypeScript app with Material UI, SCSS, and next-intl; routes live in `src/app`, shared UI in `src/components`, utilities in `src/lib`, styles in `src/styles`, and static assets in `public/`.
-- `database/` – Oracle DDL in `schema/` and deterministic seed SQL in `seeds/`, mirrored by Flyway scripts.
-- `terraform/` – Modules for `network`, `compute`, `cicd`, `iam` plus root stack under `terraform/`; each module follows the `main.tf`, `variables.tf`, `outputs.tf` convention for clarity.
+## Project Mission
+- This repository builds an open-source chat AI agent platform.
+- The goal is to let contributors ship a practical, self-hostable assistant with a web UI, API layer, and infrastructure-as-code.
+- The agent must support prompt versioning, structured outputs, and reliable integration with Ollama-based local models.
 
-## Product Direction & Core Flows
-- Helpclub is a hiring platform that connects job seekers with job posters.
-- Job posters chat with an AI agent to define requirements; the agent produces a structured job post JSON and suggests matching seekers by skills.
-- Job seekers chat with an AI agent to create or update profiles; they receive email notifications when new job posts match their skills.
-- AI integration uses Ollama and should keep prompts, schema definitions, and model configs versioned in the repo.
+## Project Structure & Module Organization
+- `backend/` - Spring Boot service (Maven); core logic in `src/main/java`, app config + AI prompt assets in `src/main/resources`, tests in `src/test/java`.
+- `frontend/` - Next.js 14 + TypeScript app with Material UI and SCSS; routes in `src/app`, shared UI in `src/components`, utilities in `src/lib`, styles in `src/styles`.
+- `database/` - Oracle DDL in `schema/` and deterministic seed SQL in `seeds/`, mirrored by Flyway scripts where applicable.
+- `terraform/` - IaC root stack and modules (for example `network`, `compute`, `cicd`, `iam`); keep module files split into `main.tf`, `variables.tf`, and `outputs.tf`.
+
+## Core Product Flows
+- Users open a chat session in the frontend and exchange messages with the AI agent.
+- The backend orchestrates prompts, model config, context handling, and structured response generation.
+- Prompt templates, schema definitions, and model settings are versioned under source control so behavior changes are auditable.
+- The platform should remain extensible for role-based agent experiences and future integrations.
 
 ## Build, Test, and Development Commands
-- `cd backend && mvn spring-boot:run` – start the API against the configured Oracle instance.
-- `cd backend && mvn test` – run unit/integration tests via JUnit 5.
-- `cd frontend && npm install && npm run dev` – launch the Next.js dev server on `http://localhost:3000`.
-- `cd frontend && npm run build` – production build used by Docker and Terraform deploys.
-- `cd terraform && terraform init && terraform plan` – validate infrastructure changes.
+- `cd backend && mvn spring-boot:run` - run the API locally.
+- `cd backend && mvn test` - run backend tests (JUnit 5).
+- `cd frontend && npm install && npm run dev` - run the frontend on `http://localhost:3000`.
+- `cd frontend && npm run build` - create a production frontend build.
+- `cd terraform && terraform init && terraform plan` - validate infrastructure changes locally.
 
 ## Deployment & Automation
-- Deployments are automated via GitHub Actions only; do not run manual Docker or Terraform applies.
-- Docker images are built in CI and deployed via Terraform from the pipeline.
-- Treat Terraform runs as CI-owned; local usage should be limited to `terraform plan` for validation.
-- AWS deployments must use serverless components (ECS Fargate, ALB, Aurora Serverless v2) instead of EC2.
-- IAM users must be scoped to least-privilege policies for the specific deployment actions they need.
+- Deployments are CI-driven via GitHub Actions; avoid manual `terraform apply` and ad-hoc production deploys.
+- Docker images are built in CI and promoted through the pipeline.
+- Keep AWS deployments serverless-first (ECS Fargate, ALB, managed data services) instead of EC2 hosts.
+- Use least-privilege IAM permissions for deployment users, roles, and automation.
 
 ## Coding Style & Naming Conventions
-- Java: 4-space indentation, package names `com.helpclub.*`, classes in `PascalCase`, Spring components annotated explicitly. Auto-format with `mvn fmt:format` if added.
-- TypeScript/React: follow Next.js defaults, 2-space indentation, functional components in `PascalCase`, hooks/helpers in `camelCase`. Prefer Material UI components and SCSS modules or global SCSS in `src/styles`. Run `npm run lint` to enforce ESLint + Next rules.
-- Terraform: snake_case for variables, module outputs in lowercase, keep one resource block per concern.
-  - Module files must stay split into `main.tf`, `variables.tf`, and `outputs.tf`; avoid reintroducing monolithic files.
+- Java: 4-space indentation, package names under `com.helpclub.*`, classes in `PascalCase`, explicit Spring annotations.
+- TypeScript/React: 2-space indentation, components in `PascalCase`, hooks/helpers in `camelCase`, follow Next.js + ESLint defaults.
+- Terraform: `snake_case` inputs, lowercase outputs, one resource block per concern.
 
 ## Testing Guidelines
-- Backend tests live under `src/test/java`; name classes `<Feature>Tests` and cover service + repository layers. Aim for happy path + failure path per endpoint.
-- Frontend tests (when added) should live beside components or under `src/__tests__`, using Playwright or React Testing Library; name files `<component>.test.tsx`.
+- Backend tests: `backend/src/test/java`, named `<Feature>Tests`; cover happy and failure paths for APIs/services.
+- Frontend tests: colocated or in `src/__tests__`, using Playwright or React Testing Library when added.
 
 ## Commit & Pull Request Guidelines
-- Commit message format: `<area>: <commit message description>` (e.g., `ci: add frontend lint workflow`, `docs: clarify branch naming`).
-- Branch naming: use `<area>/<short-slug>` without issue numbers. Use `ci/` for CI/CD work (e.g., `ci/add-frontend-lint-workflow`) and `docs/` for documentation-only updates.
-- Each PR should describe scope, link issues (e.g., `Fixes #123`), include screenshots/GIFs for UI tweaks, and mention any Terraform state impacts. Keep PRs focused per layer (API vs. frontend vs. infra) when possible.
+- Commit format: `<area>: <description>` (for example `backend: add chat context truncation`).
+- Branch naming: `<area>/<short-slug>` (for example `docs/update-open-source-positioning`).
+- PRs should describe scope, link issues (for example `Fixes #123`), and include screenshots/GIFs for UI changes.
 
 ## Security & Configuration Tips
-- Never commit real Oracle credentials; rely on environment variables (`SPRING_DATASOURCE_URL`, `DB_PASSWORD`).
-- Configure Terraform remote state (S3 + DynamoDB or equivalent) before running `apply` to avoid drift.
-- Keep secrets in `.tfvars` files that are gitignored; share sample templates (e.g., `dev.tfvars.example`) when needed.
-- Dockerfiles expect multi-stage builds; ensure CI caches dependencies or uses registry-based build cache to reduce deployment time.
-- Store AWS IAM access keys in CI secrets only; do not commit them to the repo.
+- Never commit secrets or real credentials; use environment variables and CI secret stores.
+- Keep sensitive Terraform values in ignored `.tfvars` files and commit sanitized examples only.
+- Ensure prompt and model config changes are reviewed like code, especially when they affect response behavior.
 
 ## MCP-First Workflow Expectations
-- Prefer MCP servers when inspecting the Next.js app: start the dev server and connect via the Next.js MCP endpoint before reading files manually. Use MCP tools to list routes, inspect build errors, and gather diagnostics.
-- When verifying UI behavior, use MCP-enabled browser automation (Playwright integration) to render pages and capture console output instead of curl-based checks.
-- Document any MCP limitations (missing tooling, offline server) in PR descriptions so reviewers know why fallback methods were used.
+- Prefer MCP tooling when inspecting the Next.js app (routes, diagnostics, runtime behavior) before manual deep-dives.
+- Use MCP-enabled browser automation for UI verification and console checks where available.
+- If MCP tooling is unavailable, document the fallback approach in PR notes.
