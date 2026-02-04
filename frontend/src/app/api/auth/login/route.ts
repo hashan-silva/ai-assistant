@@ -8,8 +8,35 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 type LoginPayload = {
-  personalNumber?: string;
+  identifier?: string;
   password?: string;
+};
+
+const setAuthCookies = (
+  response: NextResponse,
+  authResult: {AccessToken?: string; IdToken?: string; RefreshToken?: string}
+) => {
+  if (authResult.AccessToken) {
+    response.cookies.set('ai-assistant_access_token', authResult.AccessToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/'
+    });
+  }
+  if (authResult.IdToken) {
+    response.cookies.set('ai-assistant_id_token', authResult.IdToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/'
+    });
+  }
+  if (authResult.RefreshToken) {
+    response.cookies.set('ai-assistant_refresh_token', authResult.RefreshToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/'
+    });
+  }
 };
 
 const getClient = () => {
@@ -32,8 +59,8 @@ export async function POST(request: Request) {
     return NextResponse.json({error: 'Invalid JSON payload'}, {status: 400});
   }
 
-  if (!payload.personalNumber || !payload.password) {
-    return NextResponse.json({error: 'Personal number and password are required'}, {status: 400});
+  if (!payload.identifier || !payload.password) {
+    return NextResponse.json({error: 'Email or phone number and password are required'}, {status: 400});
   }
 
   try {
@@ -42,7 +69,7 @@ export async function POST(request: Request) {
       AuthFlow: 'USER_PASSWORD_AUTH',
       ClientId: clientId,
       AuthParameters: {
-        USERNAME: payload.personalNumber,
+        USERNAME: payload.identifier,
         PASSWORD: payload.password
       }
     }));
@@ -53,25 +80,7 @@ export async function POST(request: Request) {
     }
 
     const response = NextResponse.json({ok: true});
-    response.cookies.set('helpclub_access_token', accessToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      path: '/'
-    });
-    if (result.AuthenticationResult?.IdToken) {
-      response.cookies.set('helpclub_id_token', result.AuthenticationResult.IdToken, {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/'
-      });
-    }
-    if (result.AuthenticationResult?.RefreshToken) {
-      response.cookies.set('helpclub_refresh_token', result.AuthenticationResult.RefreshToken, {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/'
-      });
-    }
+    setAuthCookies(response, result.AuthenticationResult || {});
     return response;
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Login failed';

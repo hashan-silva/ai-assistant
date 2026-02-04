@@ -71,39 +71,9 @@ resource "aws_iam_role_policy" "task_exec_ssm" {
   })
 }
 
-resource "aws_iam_role_policy" "task_dynamodb" {
-  count = length(var.dynamodb_table_arns) > 0 ? 1 : 0
-  name  = "${local.name_prefix}-ecs-dynamodb"
-  role  = aws_iam_role.task.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "dynamodb:BatchGetItem",
-          "dynamodb:BatchWriteItem",
-          "dynamodb:DeleteItem",
-          "dynamodb:GetItem",
-          "dynamodb:PutItem",
-          "dynamodb:Query",
-          "dynamodb:Scan",
-          "dynamodb:UpdateItem",
-          "dynamodb:DescribeTable"
-        ]
-        Resource = concat(
-          var.dynamodb_table_arns,
-          [for arn in var.dynamodb_table_arns : "${arn}/index/*"]
-        )
-      }
-    ]
-  })
-}
-
 resource "aws_security_group" "alb" {
   name        = "${local.name_prefix}-alb-sg"
-  description = "ALB ingress for helpclub backend"
+  description = "ALB ingress for ai-assistant backend"
   vpc_id      = var.vpc_id
 }
 
@@ -184,12 +154,12 @@ resource "aws_ecs_task_definition" "this" {
 
   container_definitions = jsonencode([
     {
-      name      = "helpclub-ollama"
+      name      = "ai-assistant-ollama"
       image     = var.ollama_image
       essential = true
       entryPoint = ["/bin/sh", "-c"]
       command = [
-        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull llama3.2:1b; wait"
+        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull qwen2.5:3b; wait"
       ]
       portMappings = [
         {
@@ -207,7 +177,7 @@ resource "aws_ecs_task_definition" "this" {
       }
     },
     {
-      name      = "helpclub-backend"
+      name      = "ai-assistant-backend"
       image     = var.backend_image
       essential = true
       portMappings = [
@@ -223,35 +193,11 @@ resource "aws_ecs_task_definition" "this" {
         },
         {
           name  = "OLLAMA_MODEL"
-          value = "llama3.2:1b"
+          value = "qwen2.5:3b"
         },
         {
           name  = "AWS_REGION"
           value = var.aws_region
-        },
-        {
-          name  = "DDB_JOB_SEEKER_PROFILES_TABLE"
-          value = lookup(var.dynamodb_table_names, "job_seeker_profiles", "")
-        },
-        {
-          name  = "DDB_JOB_POSTER_PROFILES_TABLE"
-          value = lookup(var.dynamodb_table_names, "job_poster_profiles", "")
-        },
-        {
-          name  = "DDB_JOB_POSTS_TABLE"
-          value = lookup(var.dynamodb_table_names, "job_posts", "")
-        },
-        {
-          name  = "DDB_JOB_POST_INTERESTS_TABLE"
-          value = lookup(var.dynamodb_table_names, "job_post_interests", "")
-        },
-        {
-          name  = "DDB_JOB_POST_ALLOCATIONS_TABLE"
-          value = lookup(var.dynamodb_table_names, "job_post_allocations", "")
-        },
-        {
-          name  = "DDB_JOB_RATINGS_TABLE"
-          value = lookup(var.dynamodb_table_names, "job_ratings", "")
         }
       ]
       logConfiguration = {
@@ -284,7 +230,7 @@ resource "aws_ecs_service" "this" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.backend.arn
-    container_name   = "helpclub-backend"
+    container_name   = "ai-assistant-backend"
     container_port   = 8080
   }
 

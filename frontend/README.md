@@ -1,17 +1,35 @@
-# Helpclub Frontend
+# AI Assistant Frontend (React + Next.js)
 
-Next.js app for the freelancer marketplace experience.
+Next.js chat UI for the AI assistant.
 
-## Scripts
+## Run locally
 
-- `npm run dev` – start dev server on http://localhost:3000
-- `npm run build` – production build
-- `npm run start` – run built app
+```bash
+npm install
+npm run dev
+```
 
-## Env
+## Build
 
-Configure the backend API base URL via `NEXT_PUBLIC_API_URL`. Default pages call the Spring Boot API at `http://localhost:8080`.
+```bash
+npm run build
+npm run start
+```
 
-Auth (Cognito):
+## Auth
+
+Frontend uses Cognito-backed login/register API routes:
+- `src/app/api/auth/login/route.ts`
+- `src/app/api/auth/register/route.ts`
+
+## Runtime env vars
+
+- `API_BASE_URL` (server-side proxy base URL to backend API)
+- `NEXT_PUBLIC_API_BASE_URL` (public API base URL for client-side usage)
 - `COGNITO_REGION`
+- `COGNITO_USER_POOL_ID`
 - `COGNITO_USER_POOL_CLIENT_ID`
+
+## Main route
+
+Users are redirected from `/` to `/chat` after login flow.

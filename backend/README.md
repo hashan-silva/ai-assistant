@@ -1,39 +1,40 @@
-# Helpclub Backend
+# AI Assistant Backend (Java + Spring Boot)
 
-Spring Boot service powering the Helpclub freelancer marketplace.
+Backend API for the chat agent.
 
-## Running locally
+Responsibilities:
+- Accept chat messages from frontend
+- Build prompt payload from versioned instruction files
+- Call Ollama and return assistant response
+
+## Run locally
 
 ```bash
 mvn spring-boot:run
 ```
 
-## Building
+## Build/test
 
 ```bash
 mvn clean package
+mvn test
 ```
 
-## Environment
+## Key env vars
 
-Database connection defaults are stored in `src/main/resources/application.yml`. Override using standard Spring profile properties or environment variables such as `SPRING_DATASOURCE_URL`.
+- `OLLAMA_BASE_URL` (default: `http://localhost:11434`)
+- `OLLAMA_MODEL` (default: `qwen2.5:3b`)
+- `AI_INSTRUCTIONS_VERSION` (default: `v1`)
 
-## AI instructions
+## AI instruction assets
 
-Versioned AI instruction files live under `src/main/resources/ai/<version>/`.
-Use `system-job-seeker.md` and `system-job-poster.md` for audience-specific prompts.
-Set `AI_INSTRUCTIONS_VERSION` to select the instruction version (defaults to `v1`).
+Path: `src/main/resources/ai/<version>/`
 
-Chat endpoints select the audience:
-- `POST /api/chat/job-seeker`
-- `POST /api/chat/job-poster`
+Current files include:
+- `system.md`
+- `config.yml`
+- `schema.json` (optional)
 
-## DynamoDB
+## API
 
-Backend persistence uses DynamoDB tables configured via environment variables:
-- `DDB_JOB_SEEKER_PROFILES_TABLE`
-- `DDB_JOB_POSTER_PROFILES_TABLE`
-- `DDB_JOB_POSTS_TABLE`
-- `DDB_JOB_POST_INTERESTS_TABLE`
-- `DDB_JOB_POST_ALLOCATIONS_TABLE`
-- `DDB_JOB_RATINGS_TABLE`
+- `POST /api/chat`

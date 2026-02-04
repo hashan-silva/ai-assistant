@@ -24,7 +24,7 @@ resource "aws_cognito_user_pool" "this" {
     name                = "email"
     attribute_data_type = "String"
     mutable             = true
-    required            = true
+    required            = false
 
     string_attribute_constraints {
       min_length = 3
@@ -36,7 +36,7 @@ resource "aws_cognito_user_pool" "this" {
     name                = "phone_number"
     attribute_data_type = "String"
     mutable             = true
-    required            = true
+    required            = false
 
     string_attribute_constraints {
       min_length = 6
@@ -68,29 +68,6 @@ resource "aws_cognito_user_pool" "this" {
     }
   }
 
-  schema {
-    name                = "address"
-    attribute_data_type = "String"
-    mutable             = true
-    required            = true
-
-    string_attribute_constraints {
-      min_length = 1
-      max_length = 2048
-    }
-  }
-
-  schema {
-    name                = "profile_type"
-    attribute_data_type = "String"
-    mutable             = true
-    required            = false
-
-    string_attribute_constraints {
-      min_length = 1
-      max_length = 20
-    }
-  }
 }
 
 resource "aws_cognito_user_pool_client" "web" {

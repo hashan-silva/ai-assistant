@@ -2,13 +2,12 @@ name: Deploy to AWS
 
 on:
   push:
-    branches: ["main", "v*"]
+    branches: ["main"]
     paths:
       - 'backend/**'
       - 'frontend/**'
       - 'terraform/**'
       - '.github/workflows/terraform-deployment.yml'
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,8 +17,8 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/helpclub-backend
-      FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/helpclub-frontend
+      BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/ai-assistant-backend
+      FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/ai-assistant-frontend
 
     steps:
       - name: Checkout
@@ -44,7 +43,6 @@ jobs:
           images: ${{ env.BACKEND_IMAGE }}
           tags: |
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-            type=ref,event=branch,enable=${{ startsWith(github.ref, 'refs/heads/v') }}
 
       - name: Extract frontend metadata
         id: meta-frontend
@@ -53,7 +51,6 @@ jobs:
           images: ${{ env.FRONTEND_IMAGE }}
           tags: |
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-            type=ref,event=branch,enable=${{ startsWith(github.ref, 'refs/heads/v') }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -82,7 +79,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Build and push frontend
+      - name: Build and push frontend image
         id: build-frontend
         uses: docker/build-push-action@v6
         with:
@@ -93,11 +90,10 @@ jobs:
           labels: ${{ steps.meta-frontend.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      
-      - name: Set image digests
+
+      - name: Set backend image digest
         run: |
           echo "BACKEND_IMAGE_DIGEST=${{ env.BACKEND_IMAGE }}@${{ steps.build-backend.outputs.digest }}" >> $GITHUB_ENV
-          echo "FRONTEND_IMAGE_DIGEST=${{ env.FRONTEND_IMAGE }}@${{ steps.build-frontend.outputs.digest }}" >> $GITHUB_ENV
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -111,8 +107,8 @@ jobs:
           TF_WORKSPACE: main
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-          TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION || 'eu-north-1' }}
+          TF_VAR_aws_region: ${{ secrets.AWS_REGION || 'eu-north-1' }}
           TF_VAR_backend_image: ${{ env.BACKEND_IMAGE_DIGEST }}
           TF_VAR_ollama_image: ${{ secrets.AWS_OLLAMA_IMAGE || 'ollama/ollama:latest' }}
         run: terraform init
@@ -124,22 +120,13 @@ jobs:
           TF_WORKSPACE: main
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-          TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION || 'eu-north-1' }}
+          TF_VAR_aws_region: ${{ secrets.AWS_REGION || 'eu-north-1' }}
           TF_VAR_backend_image: ${{ env.BACKEND_IMAGE_DIGEST }}
           TF_VAR_ollama_image: ${{ secrets.AWS_OLLAMA_IMAGE || 'ollama/ollama:latest' }}
         run: terraform apply -auto-approve
 
-      - name: Export frontend build
-        working-directory: frontend
-        env:
-          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.FRONTEND_API_BASE_URL }}
-          COGNITO_REGION: ${{ secrets.AWS_REGION }}
-          COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
-          COGNITO_USER_POOL_CLIENT_ID: ${{ secrets.COGNITO_USER_POOL_CLIENT_ID }}
-        run: npm run build
-
-      - name: Fetch frontend deployment targets
+      - name: Fetch frontend and Cognito deployment targets
         id: frontend-targets
         working-directory: terraform
         env:
@@ -147,16 +134,29 @@ jobs:
           TF_WORKSPACE: main
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION || 'eu-north-1' }}
         run: |
+          echo "ALB_DNS_NAME=$(terraform output -raw alb_dns_name)" >> $GITHUB_ENV
+          echo "COGNITO_USER_POOL_ID=$(terraform output -raw cognito_user_pool_id)" >> $GITHUB_ENV
+          echo "COGNITO_USER_POOL_CLIENT_ID=$(terraform output -raw cognito_user_pool_client_id)" >> $GITHUB_ENV
           echo "FRONTEND_BUCKET=$(terraform output -raw frontend_bucket_name)" >> $GITHUB_ENV
           echo "FRONTEND_DISTRIBUTION_ID=$(terraform output -raw frontend_cloudfront_distribution_id)" >> $GITHUB_ENV
+
+      - name: Export frontend build
+        working-directory: frontend
+        env:
+          NEXT_PUBLIC_API_BASE_URL: http://${{ env.ALB_DNS_NAME }}
+          API_BASE_URL: http://${{ env.ALB_DNS_NAME }}
+          COGNITO_REGION: ${{ secrets.AWS_REGION || 'eu-north-1' }}
+          COGNITO_USER_POOL_ID: ${{ env.COGNITO_USER_POOL_ID }}
+          COGNITO_USER_POOL_CLIENT_ID: ${{ env.COGNITO_USER_POOL_CLIENT_ID }}
+        run: npm run build
 
       - name: Sync frontend to S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION || 'eu-north-1' }}
         run: |
           aws s3 sync frontend/out s3://$FRONTEND_BUCKET --delete
           aws cloudfront create-invalidation --distribution-id $FRONTEND_DISTRIBUTION_ID --paths "/*"

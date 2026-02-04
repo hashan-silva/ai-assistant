@@ -31,7 +31,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = request.cookies.get('helpclub_access_token');
+  const token = request.cookies.get('ai-assistant_access_token');
   if (!token) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
@@ -44,9 +44,9 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     const response = NextResponse.redirect(url);
-    response.cookies.delete('helpclub_access_token');
-    response.cookies.delete('helpclub_id_token');
-    response.cookies.delete('helpclub_refresh_token');
+    response.cookies.delete('ai-assistant_access_token');
+    response.cookies.delete('ai-assistant_id_token');
+    response.cookies.delete('ai-assistant_refresh_token');
     return response;
   }
 

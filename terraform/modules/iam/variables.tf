@@ -18,11 +18,6 @@ variable "task_execution_role_arn" {
   type = string
 }
 
-variable "dynamodb_table_arns" {
-  type    = list(string)
-  default = []
-}
-
 variable "frontend_bucket_arn" {
   type = string
 }

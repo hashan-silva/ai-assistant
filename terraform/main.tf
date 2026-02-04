@@ -6,12 +6,6 @@ module "network" {
   public_subnet_cidrs = var.public_subnet_cidrs
 }
 
-module "database" {
-  source      = "./modules/database"
-  project     = var.project
-  environment = var.environment
-}
-
 module "auth" {
   source      = "./modules/auth"
   project     = var.project
@@ -30,8 +24,6 @@ module "compute" {
   task_cpu       = var.task_cpu
   task_memory    = var.task_memory
   desired_count  = var.desired_count
-  dynamodb_table_arns = module.database.table_arns
-  dynamodb_table_names = module.database.table_name_map
 }
 
 module "frontend" {
@@ -47,7 +39,6 @@ module "iam" {
   ecs_cluster_name        = module.compute.cluster_name
   ecs_service_name        = module.compute.service_name
   task_execution_role_arn = module.compute.task_execution_role_arn
-  dynamodb_table_arns     = module.database.table_arns
   frontend_bucket_arn     = module.frontend.bucket_arn
   frontend_distribution_arn = module.frontend.cloudfront_distribution_arn
 }

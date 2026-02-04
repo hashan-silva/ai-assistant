@@ -2,7 +2,7 @@ services:
   frontend:
     build:
       context: ./frontend
-    container_name: helpclub-frontend
+    container_name: ai-assistant-frontend
     user: "1000:1000"
     environment:
       API_BASE_URL: http://backend:8080
@@ -11,7 +11,7 @@ services:
   backend:
     build:
       context: ./backend
-    container_name: helpclub-backend
+    container_name: ai-assistant-backend
     user: "1000:1000"
     environment:
       OLLAMA_BASE_URL: http://ollama:11434
@@ -19,7 +19,7 @@ services:
       - "8080:8080"
   ollama:
     image: ollama/ollama:latest
-    container_name: helpclub-ollama
+    container_name: ai-assistant-ollama
     user: "1000:1000"
     ports:
       - "11434:11434"
@@ -27,7 +27,7 @@ services:
       [
         "/bin/sh",
         "-c",
-        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull llama3.1; wait"
+        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull qwen2.5:3b; wait"
       ]
     environment:
       HOME: /tmp
@@ -44,7 +44,7 @@ services:
 
   ollama-gpu:
     image: ollama/ollama:latest
-    container_name: helpclub-ollama-gpu
+    container_name: ai-assistant-ollama-gpu
     user: "1000:1000"
     ports:
       - "11434:11434"
@@ -52,7 +52,7 @@ services:
       [
         "/bin/sh",
         "-c",
-        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull llama3.1; wait"
+        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull qwen2.5:3b; wait"
       ]
     environment:
       HOME: /tmp

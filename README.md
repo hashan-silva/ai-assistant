@@ -1,34 +1,33 @@
-# Open Source Chat AI Agent
+# AI Assistant: Ollama + Java + React + Terraform on AWS
 
-This monorepo powers an open-source, self-hostable chat AI agent platform. It includes a web UI, backend orchestration service, AI prompt/schema assets, and Terraform modules for cloud deployment.
+This repository publishes a complete, open-source setup for a chat AI agent on AWS.
 
-[![Terraform Lint & Security](https://github.com/hashan-silva/helpclub/actions/workflows/terraform-ci.yml/badge.svg)](https://github.com/hashan-silva/helpclub/actions/workflows/terraform-ci.yml)
-[![SonarCloud Scan](https://github.com/hashan-silva/helpclub/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/hashan-silva/helpclub/actions/workflows/sonarcloud.yml)
-[![Deploy to AWS](https://github.com/hashan-silva/helpclub/actions/workflows/terraform-deployment.yml/badge.svg)](https://github.com/hashan-silva/helpclub/actions/workflows/terraform-deployment.yml)
-[![Frontend Lint](https://github.com/hashan-silva/helpclub/actions/workflows/frontend-lint.yml/badge.svg)](https://github.com/hashan-silva/helpclub/actions/workflows/frontend-lint.yml)
+It combines:
+- Ollama model runtime
+- Spring Boot backend (Java)
+- Next.js frontend (React + TypeScript)
+- Terraform infrastructure modules and GitHub Actions deployment
 
-## Stack
+[![CodeQL](https://github.com/hashan-silva/ai-assistant/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/hashan-silva/ai-assistant/actions/workflows/github-code-scanning/codeql)
+[![Deploy to AWS](https://github.com/hashan-silva/ai-assistant/actions/workflows/terraform-deployment.yml/badge.svg)](https://github.com/hashan-silva/ai-assistant/actions/workflows/terraform-deployment.yml)
+[![Frontend Lint](https://github.com/hashan-silva/ai-assistant/actions/workflows/frontend-lint.yml/badge.svg)](https://github.com/hashan-silva/ai-assistant/actions/workflows/frontend-lint.yml)
+[![SonarCloud Scan](https://github.com/hashan-silva/ai-assistant/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/hashan-silva/ai-assistant/actions/workflows/sonarcloud.yml)
+[![Terraform Lint & Security](https://github.com/hashan-silva/ai-assistant/actions/workflows/terraform-ci.yml/badge.svg)](https://github.com/hashan-silva/ai-assistant/actions/workflows/terraform-ci.yml)
 
-- **Backend** - Spring Boot (Maven), Flyway migrations
-- **Frontend** - Next.js 14 + TypeScript + Material UI + SCSS + next-intl
-- **AI Runtime** - Ollama with versioned prompts, schema definitions, and model config
-- **Database** - Oracle schema + deterministic seed SQL for local development
-- **Terraform** - IaC for AWS serverless infrastructure
+## Architecture
 
-## Core flows
-
-- Users chat with the AI agent through the web interface.
-- The backend manages instructions, context handling, and structured responses.
-- Prompt templates and output schemas are stored in-repo for reproducibility and review.
-- The architecture is designed for extension with additional agent personas and integrations.
+- Frontend static app hosted on S3 + CloudFront
+- Backend + Ollama on ECS Fargate
+- ALB for backend public API
+- Cognito for authentication
+- Terraform manages AWS resources end-to-end
 
 ## Project layout
 
-```
-backend/    # Spring Boot service with Maven build
-frontend/   # Next.js application
-database/   # Oracle DDL + seed SQL
-terraform/  # Modules and root Terraform stack
+```text
+backend/    # Spring Boot API and AI orchestration
+frontend/   # Next.js chat app
+terraform/  # AWS infrastructure as code
 ```
 
 ## Local development
@@ -45,36 +44,29 @@ cd frontend && npm install && npm run dev
 docker compose up --build
 ```
 
-Useful checks:
+## Deploy to AWS
 
-```bash
-cd backend && mvn test
-cd frontend && npm run build
-```
+Deployments are CI-driven via GitHub Actions.
 
-## Terraform deployment
+Workflow `.github/workflows/terraform-deployment.yml`:
+- builds backend/frontend images
+- runs `terraform apply`
+- reads Terraform outputs (ALB, Cognito, frontend distribution targets)
+- builds frontend with runtime env values
+- syncs frontend assets to S3 and invalidates CloudFront
 
-Reusable modules for AWS networking, compute, CI/CD, and IAM live under `terraform/`.
+Default AWS region is Stockholm: `eu-north-1`.
 
-```bash
-cd terraform
-terraform init
-terraform plan
-```
+## Required GitHub secrets
 
-Deployments are intended to run through GitHub Actions. Use local `terraform plan` for validation and review.
+- `DOCKERHUB_USERNAME`
+- `DOCKERHUB_TOKEN`
+- `TF_API_TOKEN`
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
 
-### AWS serverless notes
-
-- ECS Fargate runs the frontend, backend, and Ollama containers in a single task behind an Application Load Balancer.
-- Deployment IAM principals should have least-privilege permissions and use CI secrets.
-- Some ECS actions (for example task definition registration) may require wildcard resource permissions; keep that scope minimal and documented.
-
-Required Terraform variables (examples):
-
-```bash
-aws_region="eu-north-1"
-frontend_image="ghcr.io/<org>/<project>-frontend:latest"
-backend_image="ghcr.io/<org>/<project>-backend:latest"
-ollama_image="ollama/ollama:latest"
-```
+Optional:
+- `AWS_REGION` (defaults to `eu-north-1`)
+- `AWS_OLLAMA_IMAGE` (defaults to `ollama/ollama:latest`)
+- `SONAR_TOKEN`
+- `TOKEN_CICD`
