@@ -8,13 +8,10 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 type RegisterPayload = {
-  personalNumber?: string;
   email?: string;
   phone?: string;
   firstName?: string;
   lastName?: string;
-  city?: string;
-  profileType?: string;
   password?: string;
 };
 
@@ -38,25 +35,29 @@ export async function POST(request: Request) {
     return NextResponse.json({error: 'Invalid JSON payload'}, {status: 400});
   }
 
-  if (!payload.personalNumber || !payload.password || !payload.email || !payload.phone
-    || !payload.firstName || !payload.lastName || !payload.city || !payload.profileType) {
+  if (!payload.password || !payload.firstName || !payload.lastName) {
     return NextResponse.json({error: 'Missing required fields'}, {status: 400});
   }
+
+  const uniqueIdentifier = payload.email?.trim() || payload.phone?.trim();
+  if (!uniqueIdentifier) {
+    return NextResponse.json({error: 'Email or phone number is required'}, {status: 400});
+  }
+
+  const userAttributes = [
+    payload.email ? {Name: 'email', Value: payload.email} : null,
+    payload.phone ? {Name: 'phone_number', Value: payload.phone} : null,
+    {Name: 'given_name', Value: payload.firstName},
+    {Name: 'family_name', Value: payload.lastName}
+  ].filter((attribute): attribute is {Name: string; Value: string} => attribute !== null);
 
   try {
     const {client, clientId} = getClient();
     const result = await client.send(new SignUpCommand({
       ClientId: clientId,
-      Username: payload.personalNumber,
+      Username: uniqueIdentifier,
       Password: payload.password,
-      UserAttributes: [
-        {Name: 'email', Value: payload.email},
-        {Name: 'phone_number', Value: payload.phone},
-        {Name: 'given_name', Value: payload.firstName},
-        {Name: 'family_name', Value: payload.lastName},
-        {Name: 'address', Value: payload.city},
-        {Name: 'custom:profile_type', Value: payload.profileType}
-      ]
+      UserAttributes: userAttributes
     }));
 
     if (!result.UserSub) {

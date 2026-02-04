@@ -8,7 +8,7 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 type LoginPayload = {
-  personalNumber?: string;
+  identifier?: string;
   password?: string;
 };
 
@@ -32,8 +32,8 @@ export async function POST(request: Request) {
     return NextResponse.json({error: 'Invalid JSON payload'}, {status: 400});
   }
 
-  if (!payload.personalNumber || !payload.password) {
-    return NextResponse.json({error: 'Personal number and password are required'}, {status: 400});
+  if (!payload.identifier || !payload.password) {
+    return NextResponse.json({error: 'Email or phone number and password are required'}, {status: 400});
   }
 
   try {
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       AuthFlow: 'USER_PASSWORD_AUTH',
       ClientId: clientId,
       AuthParameters: {
-        USERNAME: payload.personalNumber,
+        USERNAME: payload.identifier,
         PASSWORD: payload.password
       }
     }));
