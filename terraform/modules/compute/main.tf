@@ -154,9 +154,9 @@ resource "aws_ecs_task_definition" "this" {
 
   container_definitions = jsonencode([
     {
-      name      = "ai-assistant-ollama"
-      image     = var.ollama_image
-      essential = true
+      name       = "ai-assistant-ollama"
+      image      = var.ollama_image
+      essential  = true
       entryPoint = ["/bin/sh", "-c"]
       command = [
         "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull qwen2.5:3b; wait"
@@ -215,11 +215,11 @@ resource "aws_ecs_task_definition" "this" {
 data "aws_region" "current" {}
 
 resource "aws_ecs_service" "this" {
-  name            = "${local.name_prefix}-service"
-  cluster         = aws_ecs_cluster.this.id
-  task_definition = aws_ecs_task_definition.this.arn
-  desired_count   = var.desired_count
-  launch_type     = "FARGATE"
+  name                   = "${local.name_prefix}-service"
+  cluster                = aws_ecs_cluster.this.id
+  task_definition        = aws_ecs_task_definition.this.arn
+  desired_count          = var.desired_count
+  launch_type            = "FARGATE"
   enable_execute_command = true
 
   network_configuration {
