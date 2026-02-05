@@ -22,47 +22,6 @@ It combines:
 - Cognito for authentication
 - Terraform manages AWS resources end-to-end
 
-```mermaid
-flowchart LR
-    user((User))
-
-    subgraph Frontend Delivery
-        cf[CloudFront]
-        s3[S3 Static Frontend]
-        fe[Next.js App]
-        cf --> s3 --> fe
-    end
-
-    subgraph Auth
-        cognito[Cognito]
-    end
-
-    subgraph Backend Runtime
-        alb[ALB]
-        ecs[ECS Fargate]
-        api[Spring Boot API]
-        ollama[Ollama Model Runtime]
-        alb --> ecs --> api --> ollama
-    end
-
-    subgraph IaC & CI/CD
-        gha[GitHub Actions]
-        terraform[Terraform]
-        gha --> terraform
-    end
-
-    user --> cf
-    fe -->|Auth| cognito
-    fe -->|API requests| alb
-    terraform --> s3
-    terraform --> cf
-    terraform --> alb
-    terraform --> ecs
-    terraform --> cognito
-```
-
-![Architecture diagram](docs/architecture.svg)
-
 ## Project layout
 
 ```text
