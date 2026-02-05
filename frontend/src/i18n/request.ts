@@ -1,13 +1,9 @@
-import {headers} from 'next/headers';
 import {getRequestConfig} from 'next-intl/server';
-import {resolveLocale} from './locale';
+import {defaultLocale} from './routing';
 
 export default getRequestConfig(async () => {
-  const headerLocale = headers().get('accept-language');
-  const resolvedLocale = resolveLocale(headerLocale);
-
   return {
-    locale: resolvedLocale,
-    messages: (await import(`../../messages/${resolvedLocale}.json`)).default
+    locale: defaultLocale,
+    messages: (await import(`../../messages/${defaultLocale}.json`)).default
   };
 });

@@ -3,6 +3,10 @@
 import Link from 'next/link';
 import {FormEvent, useState} from 'react';
 import {useRouter} from 'next/navigation';
+import {
+  CognitoIdentityProviderClient,
+  SignUpCommand
+} from '@aws-sdk/client-cognito-identity-provider';
 import {Alert, Box, Button, Card, Stack, TextField, Typography} from '@mui/material';
 
 export default function RegisterPage() {
@@ -20,20 +24,43 @@ export default function RegisterPage() {
     setError(null);
     setIsLoading(true);
 
+    const region = process.env.NEXT_PUBLIC_COGNITO_REGION;
+    const clientId = process.env.NEXT_PUBLIC_COGNITO_USER_POOL_CLIENT_ID;
+    if (!region || !clientId) {
+      setError('Cognito is not configured');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({firstName, lastName, email, phone, password})
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        setError(payload.error || 'Registration failed');
+      const uniqueIdentifier = email.trim() || phone.trim();
+      if (!uniqueIdentifier) {
+        setError('Email or phone number is required');
+        return;
+      }
+
+      const userAttributes = [
+        email ? {Name: 'email', Value: email.trim()} : null,
+        phone ? {Name: 'phone_number', Value: phone.trim()} : null,
+        {Name: 'given_name', Value: firstName.trim()},
+        {Name: 'family_name', Value: lastName.trim()}
+      ].filter((attribute): attribute is {Name: string; Value: string} => attribute !== null);
+
+      const client = new CognitoIdentityProviderClient({region});
+      const result = await client.send(new SignUpCommand({
+        ClientId: clientId,
+        Username: uniqueIdentifier,
+        Password: password,
+        UserAttributes: userAttributes
+      }));
+      if (!result.UserSub) {
+        setError('Unable to create account');
         return;
       }
       router.push('/login');
-    } catch {
-      setError('Unable to register right now');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to register right now';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
