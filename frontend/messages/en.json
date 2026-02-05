@@ -17,19 +17,32 @@
     "phone": "Phone (optional)",
     "loginCta": "Sign in",
     "registerCta": "Create account",
+    "signingIn": "Signing in...",
+    "creatingAccount": "Creating account...",
+    "needAccount": "Need an account?",
+    "alreadyHaveAccount": "Already have an account?",
     "errors": {
       "loginFailed": "Login failed",
-      "registerFailed": "Registration failed"
+      "registerFailed": "Registration failed",
+      "missingCredentials": "Email or phone number and password are required",
+      "identifierRequired": "Email or phone number is required"
     }
   },
   "chat": {
     "roomName": "Main chat",
     "roomTopic": "Talk with the assistant in real time.",
+    "introPrompt": "Introduce yourself as a helpful AI assistant for a simple chat app.",
     "statusLive": "Live",
     "statusTyping": "Typing...",
+    "actionsMore": "More options",
     "presence": "Assistant online",
+    "avatar": "AI",
     "composerPlaceholder": "Type your message...",
     "sendLabel": "Send",
+    "people": {
+      "you": "You",
+      "assistant": "AI assistant"
+    },
     "errors": {
       "requestFailed": "Couldn't reach the AI assistant. Try again.",
       "emptyReply": "The assistant did not return a reply."

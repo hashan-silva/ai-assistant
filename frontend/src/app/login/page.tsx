@@ -3,15 +3,12 @@
 import Link from 'next/link';
 import {FormEvent, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {
-  CognitoIdentityProviderClient,
-  InitiateAuthCommand
-} from '@aws-sdk/client-cognito-identity-provider';
+import {useTranslations} from 'next-intl';
 import {Alert, Box, Button, Card, Stack, TextField, Typography} from '@mui/material';
-import {persistTokens} from '@/lib/auth';
 
 export default function LoginPage() {
   const router = useRouter();
+  const t = useTranslations('auth');
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -22,35 +19,30 @@ export default function LoginPage() {
     setError(null);
     setIsLoading(true);
 
-    const region = process.env.NEXT_PUBLIC_COGNITO_REGION;
-    const clientId = process.env.NEXT_PUBLIC_COGNITO_USER_POOL_CLIENT_ID;
-    if (!region || !clientId) {
-      setError('Cognito is not configured');
+    if (!identifier || !password) {
+      setError(t('errors.missingCredentials'));
       setIsLoading(false);
       return;
     }
 
     try {
-      const client = new CognitoIdentityProviderClient({region});
-      const result = await client.send(new InitiateAuthCommand({
-        AuthFlow: 'USER_PASSWORD_AUTH',
-        ClientId: clientId,
-        AuthParameters: {
-          USERNAME: identifier,
-          PASSWORD: password
-        }
-      }));
-      const auth = result.AuthenticationResult;
-      if (!auth?.AccessToken) {
-        setError('Login failed');
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({identifier, password})
+      });
+      let payload: {error?: string} | null = null;
+      try {
+        payload = await response.json();
+      } catch {
+        payload = null;
+      }
+      if (!response.ok) {
+        setError(payload?.error || t('errors.loginFailed'));
         return;
       }
-      persistTokens({
-        accessToken: auth.AccessToken,
-        idToken: auth.IdToken,
-        refreshToken: auth.RefreshToken
-      });
       router.push('/chat');
+      router.refresh();
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to login right now';
       setError(message);
@@ -63,20 +55,20 @@ export default function LoginPage() {
     <Box className="auth-layout">
       <Card className="auth-card">
         <Stack component="form" spacing={2} onSubmit={onSubmit}>
-          <Typography variant="h4">Sign in</Typography>
+          <Typography variant="h4">{t('loginTitle')}</Typography>
           <Typography variant="body2" color="text.secondary">
-            Use your email or phone number.
+            {t('loginSubtitle')}
           </Typography>
           {error && <Alert severity="error">{error}</Alert>}
           <TextField
-            label="Email or phone number"
+            label={t('identifier')}
             value={identifier}
             onChange={(event) => setIdentifier(event.target.value)}
             required
             fullWidth
           />
           <TextField
-            label="Password"
+            label={t('password')}
             type="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
@@ -84,10 +76,10 @@ export default function LoginPage() {
             fullWidth
           />
           <Button type="submit" variant="contained" disabled={isLoading}>
-            {isLoading ? 'Signing in...' : 'Sign in'}
+            {isLoading ? t('signingIn') : t('loginCta')}
           </Button>
           <Typography variant="body2" color="text.secondary">
-            Need an account? <Link href="/register">Register</Link>
+            {t('needAccount')} <Link href="/register">{t('registerCta')}</Link>
           </Typography>
         </Stack>
       </Card>

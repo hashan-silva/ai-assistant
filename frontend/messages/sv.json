@@ -17,19 +17,32 @@
     "phone": "Telefon (valfritt)",
     "loginCta": "Logga in",
     "registerCta": "Skapa konto",
+    "signingIn": "Loggar in...",
+    "creatingAccount": "Skapar konto...",
+    "needAccount": "Behöver du ett konto?",
+    "alreadyHaveAccount": "Har du redan ett konto?",
     "errors": {
       "loginFailed": "Inloggning misslyckades",
-      "registerFailed": "Registrering misslyckades"
+      "registerFailed": "Registrering misslyckades",
+      "missingCredentials": "E-post eller telefonnummer och lösenord krävs",
+      "identifierRequired": "E-post eller telefonnummer krävs"
     }
   },
   "chat": {
     "roomName": "Huvudchatt",
     "roomTopic": "Prata med assistenten i realtid.",
+    "introPrompt": "Presentera dig som en hjälpsam AI-assistent för en enkel chattapp.",
     "statusLive": "Live",
     "statusTyping": "Skriver...",
+    "actionsMore": "Fler alternativ",
     "presence": "Assistent online",
+    "avatar": "AI",
     "composerPlaceholder": "Skriv ditt meddelande...",
     "sendLabel": "Skicka",
+    "people": {
+      "you": "Du",
+      "assistant": "AI-assistent"
+    },
     "errors": {
       "requestFailed": "Kunde inte nå AI-assistenten. Försök igen.",
       "emptyReply": "Assistenten returnerade inget svar."

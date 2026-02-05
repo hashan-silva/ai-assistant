@@ -3,14 +3,12 @@
 import Link from 'next/link';
 import {FormEvent, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {
-  CognitoIdentityProviderClient,
-  SignUpCommand
-} from '@aws-sdk/client-cognito-identity-provider';
+import {useTranslations} from 'next-intl';
 import {Alert, Box, Button, Card, Stack, TextField, Typography} from '@mui/material';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const t = useTranslations('auth');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -24,37 +22,31 @@ export default function RegisterPage() {
     setError(null);
     setIsLoading(true);
 
-    const region = process.env.NEXT_PUBLIC_COGNITO_REGION;
-    const clientId = process.env.NEXT_PUBLIC_COGNITO_USER_POOL_CLIENT_ID;
-    if (!region || !clientId) {
-      setError('Cognito is not configured');
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      const uniqueIdentifier = email.trim() || phone.trim();
-      if (!uniqueIdentifier) {
-        setError('Email or phone number is required');
+      if (!(email.trim() || phone.trim())) {
+        setError(t('errors.identifierRequired'));
         return;
       }
 
-      const userAttributes = [
-        email ? {Name: 'email', Value: email.trim()} : null,
-        phone ? {Name: 'phone_number', Value: phone.trim()} : null,
-        {Name: 'given_name', Value: firstName.trim()},
-        {Name: 'family_name', Value: lastName.trim()}
-      ].filter((attribute): attribute is {Name: string; Value: string} => attribute !== null);
-
-      const client = new CognitoIdentityProviderClient({region});
-      const result = await client.send(new SignUpCommand({
-        ClientId: clientId,
-        Username: uniqueIdentifier,
-        Password: password,
-        UserAttributes: userAttributes
-      }));
-      if (!result.UserSub) {
-        setError('Unable to create account');
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          email: email.trim() || undefined,
+          phone: phone.trim() || undefined,
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          password
+        })
+      });
+      let payload: {error?: string} | null = null;
+      try {
+        payload = await response.json();
+      } catch {
+        payload = null;
+      }
+      if (!response.ok) {
+        setError(payload?.error || t('errors.registerFailed'));
         return;
       }
       router.push('/login');
@@ -70,21 +62,21 @@ export default function RegisterPage() {
     <Box className="auth-layout">
       <Card className="auth-card">
         <Stack component="form" spacing={2} onSubmit={onSubmit}>
-          <Typography variant="h4">Create account</Typography>
+          <Typography variant="h4">{t('registerTitle')}</Typography>
           <Typography variant="body2" color="text.secondary">
-            Use email or phone number as your login identifier.
+            {t('registerSubtitle')}
           </Typography>
           {error && <Alert severity="error">{error}</Alert>}
-          <TextField label="First name" value={firstName} onChange={(event) => setFirstName(event.target.value)} required fullWidth />
-          <TextField label="Last name" value={lastName} onChange={(event) => setLastName(event.target.value)} required fullWidth />
-          <TextField label="Email (optional)" type="email" value={email} onChange={(event) => setEmail(event.target.value)} fullWidth />
-          <TextField label="Phone (optional)" value={phone} onChange={(event) => setPhone(event.target.value)} fullWidth />
-          <TextField label="Password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} required fullWidth />
+          <TextField label={t('firstName')} value={firstName} onChange={(event) => setFirstName(event.target.value)} required fullWidth />
+          <TextField label={t('lastName')} value={lastName} onChange={(event) => setLastName(event.target.value)} required fullWidth />
+          <TextField label={t('email')} type="email" value={email} onChange={(event) => setEmail(event.target.value)} fullWidth />
+          <TextField label={t('phone')} value={phone} onChange={(event) => setPhone(event.target.value)} fullWidth />
+          <TextField label={t('password')} type="password" value={password} onChange={(event) => setPassword(event.target.value)} required fullWidth />
           <Button type="submit" variant="contained" disabled={isLoading}>
-            {isLoading ? 'Creating account...' : 'Create account'}
+            {isLoading ? t('creatingAccount') : t('registerCta')}
           </Button>
           <Typography variant="body2" color="text.secondary">
-            Already have an account? <Link href="/login">Sign in</Link>
+            {t('alreadyHaveAccount')} <Link href="/login">{t('loginCta')}</Link>
           </Typography>
         </Stack>
       </Card>
