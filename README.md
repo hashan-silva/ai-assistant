@@ -22,22 +22,6 @@ It combines:
 - Cognito for authentication
 - Terraform manages AWS resources end-to-end
 
-```mermaid
-flowchart LR
-    user((User))
-    cf[CloudFront]
-    s3[S3 Static Frontend]
-    fe[Next.js App]
-    cognito[Cognito]
-    alb[ALB]
-    api[Spring Boot API]
-    ollama[Ollama Model Runtime]
-
-    user --> cf --> s3 --> fe
-    fe -->|Auth| cognito
-    fe -->|API requests| alb --> api --> ollama
-```
-
 ## Project layout
 
 ```text
