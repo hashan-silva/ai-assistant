@@ -1,6 +1,7 @@
 'use client';
 
 import {useEffect, useMemo, useState} from 'react';
+import {useTranslations} from 'next-intl';
 import {
   Avatar,
   Box,
@@ -93,26 +94,29 @@ const renderMarkdown = (value: string) => {
   return htmlParts.join('');
 };
 
+const getCurrentTime = () =>
+  new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+
 export default function ChatPage() {
+  const t = useTranslations('chat');
   const copy = {
-    roomName: 'Main chat',
-    roomTopic: 'Talk with the assistant in real time.',
-    introPrompt: 'Introduce yourself as a helpful AI assistant for a simple chat app.',
-    statusLive: 'Live',
-    statusTyping: 'Typing...',
-    actionsMore: 'More options',
-    presence: 'Assistant online',
-    avatar: 'AI',
-    composerPlaceholder: 'Type your message...',
-    sendLabel: 'Send',
-    timeNow: 'Now',
+    roomName: t('roomName'),
+    roomTopic: t('roomTopic'),
+    introPrompt: t('introPrompt'),
+    statusLive: t('statusLive'),
+    statusTyping: t('statusTyping'),
+    actionsMore: t('actionsMore'),
+    presence: t('presence'),
+    avatar: t('avatar'),
+    composerPlaceholder: t('composerPlaceholder'),
+    sendLabel: t('sendLabel'),
     people: {
-      you: 'You',
-      assistant: 'AI assistant'
+      you: t('people.you'),
+      assistant: t('people.assistant')
     },
     errors: {
-      requestFailed: "Couldn't reach the AI assistant. Try again.",
-      emptyReply: 'The assistant did not return a reply.'
+      requestFailed: t('errors.requestFailed'),
+      emptyReply: t('errors.emptyReply')
     }
   };
   const chatEndpoint = '/api/chat';
@@ -176,7 +180,7 @@ export default function ChatPage() {
                 id: `assistant-${Date.now()}`,
                 author: copy.people.assistant,
                 content: replyText,
-                time: copy.timeNow
+                time: getCurrentTime()
               }
             ]);
           }
@@ -207,7 +211,7 @@ export default function ChatPage() {
       id: `user-${Date.now()}`,
       author: copy.people.you,
       content: trimmed,
-      time: copy.timeNow,
+      time: getCurrentTime(),
       self: true
     };
 
@@ -236,7 +240,7 @@ export default function ChatPage() {
         id: `assistant-${Date.now()}`,
         author: copy.people.assistant,
         content: replyText,
-        time: copy.timeNow
+        time: getCurrentTime()
       };
       setMessages((prev) => [...prev, reply]);
     } catch (error) {
@@ -246,7 +250,7 @@ export default function ChatPage() {
         content: error instanceof Error && error.message
           ? error.message
           : copy.errors.requestFailed,
-        time: copy.timeNow
+        time: getCurrentTime()
       };
       setMessages((prev) => [...prev, reply]);
     } finally {

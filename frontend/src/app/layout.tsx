@@ -1,9 +1,11 @@
 import '@/styles/globals.scss';
 import type {ReactNode} from 'react';
 import type {Metadata} from 'next';
+import {cookies, headers} from 'next/headers';
 import AppProviders from '@/components/AppProviders';
 import AppShell from '@/components/AppShell';
-import {defaultLocale} from '@/i18n/routing';
+import {defaultLocale, localeCookieName, locales} from '@/i18n/routing';
+import {resolveLocale} from '@/i18n/locale';
 import {getTranslator, loadMessages} from '@/i18n/translator';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -20,7 +22,11 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  const locale = defaultLocale;
+  const cookieStore = cookies();
+  const localeFromCookie = cookieStore.get(localeCookieName)?.value;
+  const locale = locales.includes(localeFromCookie as (typeof locales)[number])
+    ? (localeFromCookie as (typeof locales)[number])
+    : resolveLocale(headers().get('accept-language'));
   const messages = await loadMessages(locale);
 
   return (
