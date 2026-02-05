@@ -1,4 +1,3 @@
-import {headers} from 'next/headers';
-import {resolveLocale} from './locale';
+import {defaultLocale} from './routing';
 
-export const getServerLocale = () => resolveLocale(headers().get('accept-language'));
+export const getServerLocale = () => defaultLocale;
