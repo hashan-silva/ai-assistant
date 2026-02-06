@@ -37,7 +37,7 @@ export default function LoginPage() {
           'X-Request-Id': requestId
         },
         body: JSON.stringify({identifier, password})
-      }));
+      });
       let payload: {accessToken?: string; idToken?: string; refreshToken?: string; error?: string} | null = null;
       try {
         payload = await response.json();

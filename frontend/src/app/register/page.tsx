@@ -45,7 +45,7 @@ export default function RegisterPage() {
           lastName: lastName.trim(),
           password
         })
-      }));
+      });
       let payload: {ok?: boolean; error?: string} | null = null;
       try {
         payload = await response.json();
