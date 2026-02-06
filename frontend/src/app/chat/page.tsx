@@ -18,6 +18,7 @@ import {
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import SendIcon from '@mui/icons-material/Send';
 import {getAccessToken} from '@/lib/auth';
+import {buildApiUrl} from '@/lib/api';
 
 type Message = {
   id: string;
@@ -99,8 +100,6 @@ const renderMarkdown = (value: string) => {
 const getCurrentTime = () =>
   new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 
-const getApiBaseUrl = () => process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
-
 const buildChatHeaders = (requestId: string) => {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -136,7 +135,7 @@ export default function ChatPage() {
       emptyReply: t('errors.emptyReply')
     }
   };
-  const chatEndpoint = `${getApiBaseUrl()}/api/chat`;
+  const chatEndpoint = buildApiUrl('/api/chat');
   const activeRoom = {
     name: copy.roomName,
     topic: copy.roomTopic
