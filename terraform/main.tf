@@ -33,6 +33,7 @@ module "frontend" {
   source      = "./modules/frontend"
   project     = var.project
   environment = var.environment
+  alb_dns_name = module.compute.alb_dns_name
 }
 
 module "iam" {

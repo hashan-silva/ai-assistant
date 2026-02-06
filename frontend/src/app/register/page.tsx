@@ -5,6 +5,7 @@ import {FormEvent, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {useTranslations} from 'next-intl';
 import {Alert, Box, Button, Card, Stack, TextField, Typography} from '@mui/material';
+import {buildApiUrl} from '@/lib/api';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -30,9 +31,8 @@ export default function RegisterPage() {
       }
 
       const requestId = crypto.randomUUID();
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
       console.info('[auth-ui] register.start', {requestId, identifierLength: uniqueIdentifier.length});
-      const response = await fetch(`${apiBaseUrl}/api/auth/register`, {
+      const response = await fetch(buildApiUrl('/api/auth/register'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
