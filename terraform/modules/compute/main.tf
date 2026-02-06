@@ -240,7 +240,7 @@ resource "aws_ecs_task_definition" "this" {
       essential  = true
       entryPoint = ["/bin/sh", "-c"]
       command = [
-        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull qwen2.5:3b; wait"
+        "ollama serve & until ollama list >/dev/null 2>&1; do sleep 2; done; ollama pull qwen2.5:0.5b; wait"
       ]
       portMappings = [
         {
@@ -274,7 +274,7 @@ resource "aws_ecs_task_definition" "this" {
         },
         {
           name  = "OLLAMA_MODEL"
-          value = "qwen2.5:3b"
+          value = "qwen2.5:0.5b"
         },
         {
           name  = "AWS_REGION"
