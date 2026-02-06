@@ -143,6 +143,87 @@ resource "aws_lb_listener" "http" {
   }
 }
 
+resource "aws_lb_listener_rule" "auth_endpoints" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 10
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/api/auth/*", "/api/health"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "chat_options" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 15
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/api/chat", "/api/chat/*"]
+    }
+  }
+
+  condition {
+    http_request_method {
+      values = ["OPTIONS"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "chat_with_auth_header" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 20
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/api/chat", "/api/chat/*"]
+    }
+  }
+
+  condition {
+    http_header {
+      http_header_name = "Authorization"
+      values           = ["Bearer *"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "chat_without_auth_header" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 21
+
+  action {
+    type = "fixed-response"
+    fixed_response {
+      content_type = "application/json"
+      message_body = "{\"error\":\"Missing Authorization header\"}"
+      status_code  = "401"
+    }
+  }
+
+  condition {
+    path_pattern {
+      values = ["/api/chat", "/api/chat/*"]
+    }
+  }
+}
+
 resource "aws_ecs_task_definition" "this" {
   family                   = "${local.name_prefix}-task"
   requires_compatibilities = ["FARGATE"]
@@ -198,6 +279,18 @@ resource "aws_ecs_task_definition" "this" {
         {
           name  = "AWS_REGION"
           value = var.aws_region
+        },
+        {
+          name  = "COGNITO_REGION"
+          value = var.cognito_region
+        },
+        {
+          name  = "COGNITO_USER_POOL_CLIENT_ID"
+          value = var.cognito_user_pool_client_id
+        },
+        {
+          name  = "COGNITO_USER_POOL_ID"
+          value = var.cognito_user_pool_id
         }
       ]
       logConfiguration = {

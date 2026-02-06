@@ -1,6 +1,7 @@
 'use client';
 
 import {useEffect, useMemo, useState} from 'react';
+import {useRouter} from 'next/navigation';
 import {useTranslations} from 'next-intl';
 import {
   Avatar,
@@ -16,6 +17,7 @@ import {
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import SendIcon from '@mui/icons-material/Send';
+import {getAccessToken} from '@/lib/auth';
 
 type Message = {
   id: string;
@@ -97,7 +99,22 @@ const renderMarkdown = (value: string) => {
 const getCurrentTime = () =>
   new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 
+const getApiBaseUrl = () => process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
+
+const buildChatHeaders = (requestId: string) => {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'X-Request-Id': requestId
+  };
+  const token = getAccessToken();
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  return headers;
+};
+
 export default function ChatPage() {
+  const router = useRouter();
   const t = useTranslations('chat');
   const copy = {
     roomName: t('roomName'),
@@ -119,7 +136,7 @@ export default function ChatPage() {
       emptyReply: t('errors.emptyReply')
     }
   };
-  const chatEndpoint = '/api/chat';
+  const chatEndpoint = `${getApiBaseUrl()}/api/chat`;
   const activeRoom = {
     name: copy.roomName,
     topic: copy.roomTopic
@@ -146,6 +163,14 @@ export default function ChatPage() {
   }, [isAssistantTyping, messages, copy.people.assistant, copy.statusTyping]);
 
   useEffect(() => {
+    if (!getAccessToken()) {
+      console.warn('[chat-ui] auth.missing_access_token');
+      router.replace('/login');
+      return;
+    }
+  }, [router]);
+
+  useEffect(() => {
     let cancelled = false;
     const introPrompt = copy.introPrompt;
 
@@ -156,11 +181,13 @@ export default function ChatPage() {
 
     const fetchIntro = async () => {
       setIsAssistantTyping(true);
+      console.info('[chat-ui] intro.start');
       while (!cancelled) {
         try {
+          const requestId = crypto.randomUUID();
           const response = await fetch(chatEndpoint, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: buildChatHeaders(requestId),
             body: JSON.stringify({message: introPrompt})
           });
           let payload: {reply?: string; error?: string} | null = null;
@@ -173,6 +200,7 @@ export default function ChatPage() {
             throw new Error(payload?.error || copy.errors.requestFailed);
           }
           const replyText = payload?.reply?.trim() || copy.errors.emptyReply;
+          console.info('[chat-ui] intro.success', {requestId, replyLength: replyText.length});
           if (!cancelled) {
             setMessages((prev) => [
               ...prev,
@@ -186,6 +214,7 @@ export default function ChatPage() {
           }
           break;
         } catch {
+          console.warn('[chat-ui] intro.retry');
           await wait(2000);
         }
       }
@@ -199,13 +228,14 @@ export default function ChatPage() {
     return () => {
       cancelled = true;
     };
-  }, [chatEndpoint]);
+  }, [chatEndpoint, copy.errors.requestFailed, copy.errors.emptyReply, copy.introPrompt]);
 
   const handleSend = async (message: string) => {
     const trimmed = message.trim();
     if (!trimmed || isSending || isAssistantTyping) {
       return;
     }
+    console.info('[chat-ui] send.start', {messageLength: trimmed.length});
 
     const userMessage: Message = {
       id: `user-${Date.now()}`,
@@ -221,9 +251,10 @@ export default function ChatPage() {
     setIsSending(true);
     setIsAssistantTyping(true);
     try {
+      const requestId = crypto.randomUUID();
       const response = await fetch(chatEndpoint, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: buildChatHeaders(requestId),
         body: JSON.stringify({message: trimmed})
       });
       let payload: {reply?: string; error?: string} | null = null;
@@ -236,6 +267,7 @@ export default function ChatPage() {
         throw new Error(payload?.error || copy.errors.requestFailed);
       }
       const replyText = payload?.reply?.trim() || copy.errors.emptyReply;
+      console.info('[chat-ui] send.success', {requestId, replyLength: replyText.length});
       const reply: Message = {
         id: `assistant-${Date.now()}`,
         author: copy.people.assistant,
@@ -244,6 +276,9 @@ export default function ChatPage() {
       };
       setMessages((prev) => [...prev, reply]);
     } catch (error) {
+      console.error('[chat-ui] send.failed', {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
       const reply: Message = {
         id: `assistant-${Date.now()}`,
         author: copy.people.assistant,

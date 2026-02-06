@@ -42,3 +42,15 @@ variable "desired_count" {
   default = 1
 }
 
+variable "cognito_region" {
+  type = string
+}
+
+variable "cognito_user_pool_client_id" {
+  type = string
+}
+
+variable "cognito_user_pool_id" {
+  type = string
+}
+

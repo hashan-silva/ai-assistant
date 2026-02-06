@@ -2,6 +2,8 @@ package com.hashan0314.aiassistant.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -25,12 +27,13 @@ class ChatControllerTests {
         ChatController controller = new ChatController(chatService);
         ChatRequest request = new ChatRequest();
         request.setMessage("How are you?");
-        when(chatService.handleMessage("How are you?")).thenReturn(new ChatService.ChatResult("Doing well"));
+        when(chatService.handleMessage(eq("How are you?"), anyString()))
+            .thenReturn(new ChatService.ChatResult("Doing well"));
 
-        ChatResponse response = controller.chat(request);
+        ChatResponse response = controller.chat(request, "test-request-id");
 
         assertEquals("Doing well", response.getReply());
-        verify(chatService).handleMessage("How are you?");
+        verify(chatService).handleMessage("How are you?", "test-request-id");
     }
 
     @Test
@@ -39,7 +42,8 @@ class ChatControllerTests {
         ChatRequest request = new ChatRequest();
         request.setMessage(" ");
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> controller.chat(request));
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+            () -> controller.chat(request, "test-request-id"));
 
         assertEquals("Message is required", ex.getMessage());
         verifyNoInteractions(chatService);

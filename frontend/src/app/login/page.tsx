@@ -5,6 +5,7 @@ import {FormEvent, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {useTranslations} from 'next-intl';
 import {Alert, Box, Button, Card, Stack, TextField, Typography} from '@mui/material';
+import {persistTokens} from '@/lib/auth';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -26,25 +27,40 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const requestId = crypto.randomUUID();
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
+      console.info('[auth-ui] login.start', {requestId, identifierLength: identifier.length});
+      const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Request-Id': requestId
+        },
         body: JSON.stringify({identifier, password})
-      });
-      let payload: {error?: string} | null = null;
+      }));
+      let payload: {accessToken?: string; idToken?: string; refreshToken?: string; error?: string} | null = null;
       try {
         payload = await response.json();
       } catch {
         payload = null;
       }
-      if (!response.ok) {
+
+      if (!response.ok || !payload?.accessToken) {
         setError(payload?.error || t('errors.loginFailed'));
         return;
       }
+
+      persistTokens({
+        accessToken: payload.accessToken,
+        idToken: payload.idToken,
+        refreshToken: payload.refreshToken,
+        userName: identifier
+      });
+      console.info('[auth-ui] login.success', {requestId});
       router.push('/chat');
-      router.refresh();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unable to login right now';
+    } catch (submitError) {
+      const message = submitError instanceof Error ? submitError.message : 'Unable to login right now';
+      console.error('[auth-ui] login.failed', {error: message});
       setError(message);
     } finally {
       setIsLoading(false);

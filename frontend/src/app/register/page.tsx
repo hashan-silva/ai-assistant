@@ -23,14 +23,21 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      if (!(email.trim() || phone.trim())) {
+      const uniqueIdentifier = email.trim() || phone.trim();
+      if (!uniqueIdentifier) {
         setError(t('errors.identifierRequired'));
         return;
       }
 
-      const response = await fetch('/api/auth/register', {
+      const requestId = crypto.randomUUID();
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
+      console.info('[auth-ui] register.start', {requestId, identifierLength: uniqueIdentifier.length});
+      const response = await fetch(`${apiBaseUrl}/api/auth/register`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Request-Id': requestId
+        },
         body: JSON.stringify({
           email: email.trim() || undefined,
           phone: phone.trim() || undefined,
@@ -38,20 +45,23 @@ export default function RegisterPage() {
           lastName: lastName.trim(),
           password
         })
-      });
-      let payload: {error?: string} | null = null;
+      }));
+      let payload: {ok?: boolean; error?: string} | null = null;
       try {
         payload = await response.json();
       } catch {
         payload = null;
       }
-      if (!response.ok) {
+
+      if (!response.ok || !payload?.ok) {
         setError(payload?.error || t('errors.registerFailed'));
         return;
       }
+      console.info('[auth-ui] register.success', {requestId});
       router.push('/login');
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unable to register right now';
+    } catch (submitError) {
+      const message = submitError instanceof Error ? submitError.message : 'Unable to register right now';
+      console.error('[auth-ui] register.failed', {error: message});
       setError(message);
     } finally {
       setIsLoading(false);
