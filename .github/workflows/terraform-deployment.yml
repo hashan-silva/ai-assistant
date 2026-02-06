@@ -146,10 +146,6 @@ jobs:
         working-directory: frontend
         env:
           NEXT_PUBLIC_API_BASE_URL: http://${{ env.ALB_DNS_NAME }}
-          API_BASE_URL: http://${{ env.ALB_DNS_NAME }}
-          COGNITO_REGION: ${{ secrets.AWS_REGION || 'eu-north-1' }}
-          COGNITO_USER_POOL_ID: ${{ env.COGNITO_USER_POOL_ID }}
-          COGNITO_USER_POOL_CLIENT_ID: ${{ env.COGNITO_USER_POOL_CLIENT_ID }}
         run: npm run build
 
       - name: Sync frontend to S3

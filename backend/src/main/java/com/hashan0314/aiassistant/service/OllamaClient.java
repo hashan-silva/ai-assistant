@@ -2,12 +2,17 @@ package com.hashan0314.aiassistant.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 public class OllamaClient {
+
+    private static final Logger log = LoggerFactory.getLogger(OllamaClient.class);
 
     private final WebClient webClient;
     private final String model;
@@ -22,28 +27,57 @@ public class OllamaClient {
     }
 
     public String generateChatReply(String message) {
-        String prompt = instructionLoader.buildPrompt(message);
-        return generate(prompt);
+        return generateChatReply(message, "n/a");
     }
 
-    private String generate(String prompt) {
+    public String generateChatReply(String message, String requestId) {
+        long promptStartedAt = System.currentTimeMillis();
+        String prompt = instructionLoader.buildPrompt(message);
+        long promptDurationMs = System.currentTimeMillis() - promptStartedAt;
+        log.info("chat.ollama.prompt.ready requestId={} model={} promptLength={} promptBuildDurationMs={}",
+            requestId, model, prompt.length(), promptDurationMs);
+        return generate(prompt, requestId);
+    }
+
+    private String generate(String prompt, String requestId) {
         OllamaRequest request = new OllamaRequest(
             model,
             new Message[] { new Message("user", prompt) },
             false
         );
-        OllamaResponse response = webClient.post()
-            .uri("/api/chat")
-            .bodyValue(request)
-            .retrieve()
-            .bodyToMono(OllamaResponse.class)
-            .block();
+
+        long startedAt = System.currentTimeMillis();
+        log.info("chat.ollama.request.start requestId={} model={}", requestId, model);
+        OllamaResponse response;
+        try {
+            response = webClient.post()
+                .uri("/api/chat")
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(OllamaResponse.class)
+                .block();
+        } catch (WebClientResponseException ex) {
+            log.error("chat.ollama.request.http_error requestId={} status={} responseBody={}",
+                requestId, ex.getStatusCode().value(), ex.getResponseBodyAsString(), ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            log.error("chat.ollama.request.failed requestId={} reason={}",
+                requestId, ex.getMessage(), ex);
+            throw ex;
+        }
+        long durationMs = System.currentTimeMillis() - startedAt;
+        log.info("chat.ollama.request.completed requestId={} durationMs={}", requestId, durationMs);
+
         if (response == null
             || response.message() == null
             || response.message().content() == null
             || response.message().content().isBlank()) {
+            log.error("chat.ollama.response.invalid requestId={} reason=empty_content", requestId);
             throw new IllegalStateException("Empty response from LLM");
         }
+
+        log.info("chat.ollama.response.valid requestId={} replyLength={}",
+            requestId, response.message().content().length());
         return response.message().content().trim();
     }
 

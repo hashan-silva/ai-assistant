@@ -1,6 +1,8 @@
 package com.hashan0314.aiassistant.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,12 +19,12 @@ class ChatServiceTests {
 
     @Test
     void handleMessageReturnsReplyFromOllamaClient() {
-        when(ollamaClient.generateChatReply("Hello")).thenReturn("Hi there!");
+        when(ollamaClient.generateChatReply(eq("Hello"), anyString())).thenReturn("Hi there!");
         ChatService chatService = new ChatService(ollamaClient);
 
         ChatService.ChatResult result = chatService.handleMessage("Hello");
 
         assertEquals("Hi there!", result.reply());
-        verify(ollamaClient).generateChatReply("Hello");
+        verify(ollamaClient).generateChatReply("Hello", "n/a");
     }
 }

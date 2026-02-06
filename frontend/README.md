@@ -18,17 +18,13 @@ npm run start
 
 ## Auth
 
-Frontend uses Cognito-backed login/register API routes:
-- `src/app/api/auth/login/route.ts`
-- `src/app/api/auth/register/route.ts`
+Frontend uses backend auth API routes:
+- `src/app/login/page.tsx`
+- `src/app/register/page.tsx`
 
 ## Runtime env vars
 
-- `API_BASE_URL` (server-side proxy base URL to backend API)
-- `NEXT_PUBLIC_API_BASE_URL` (public API base URL for client-side usage)
-- `COGNITO_REGION`
-- `COGNITO_USER_POOL_ID`
-- `COGNITO_USER_POOL_CLIENT_ID`
+- `NEXT_PUBLIC_API_BASE_URL` (public base URL to backend API, for example `http://<alb-dns>`)
 
 ## Main route
 

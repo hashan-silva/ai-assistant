@@ -17,6 +17,9 @@ module "compute" {
   project       = var.project
   environment   = var.environment
   aws_region    = var.aws_region
+  cognito_region = var.aws_region
+  cognito_user_pool_client_id = module.auth.user_pool_client_id
+  cognito_user_pool_id = module.auth.user_pool_id
   vpc_id        = module.network.vpc_id
   subnet_ids    = module.network.public_subnet_ids
   backend_image = var.backend_image
