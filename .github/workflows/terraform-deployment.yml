@@ -144,8 +144,6 @@ jobs:
 
       - name: Export frontend build
         working-directory: frontend
-        env:
-          NEXT_PUBLIC_API_BASE_URL: http://${{ env.ALB_DNS_NAME }}
         run: npm run build
 
       - name: Sync frontend to S3
